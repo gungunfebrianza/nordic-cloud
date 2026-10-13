@@ -16,7 +16,8 @@
     "lighthouse": "node scripts/lighthouse.mjs",
     "check:brand": "node scripts/check-brand.mjs",
     "posters": "node scripts/make-posters.mjs",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm run check:brand && npm run build && npm run check:budget && npm test"
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run check:brand && npm run build && npm run check:budget && npm test",
+    "measure:hero": "node scripts/measure-hero.mjs"
   },
   "dependencies": {
     "lucide-react": "1.55.0",

@@ -1,7 +1,8 @@
 import { Footer } from "@/components/Footer";
+import { Hero } from "@/components/hero/Hero";
 import { Nav } from "@/components/nav/Nav";
 import { Section } from "@/components/Section";
-import { BRAND, SECTIONS, TAGLINE } from "@/content/site";
+import { SECTIONS } from "@/content/site";
 
 export default function Home() {
   return (
@@ -16,14 +17,7 @@ export default function Home() {
       <main id="main">
         {SECTIONS.map((s) =>
           s.id === "hero" ? (
-            <Section key={s.id} id={s.id} label={s.label} className="min-h-[70vh]">
-              <p className="font-mono text-xs tracking-wider text-ink-muted uppercase">
-                {BRAND} · Scaffold
-              </p>
-              <h1 className="mt-4 max-w-[16ch] text-5xl font-bold text-ink sm:text-7xl">
-                {TAGLINE}
-              </h1>
-            </Section>
+            <Hero key={s.id} />
           ) : (
             <Section key={s.id} id={s.id} label={s.label} className="min-h-[50vh]">
               <h2 className="font-mono text-xs font-medium tracking-wider text-ink-muted uppercase">

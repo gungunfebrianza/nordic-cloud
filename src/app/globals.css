@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
+@import "../components/hero/hero.css";
 
 @layer base {
   :root {
@@ -42,7 +43,9 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    *,
+    /* data-rm-ok marks the few motions the brief keeps under reduced motion
+       (e.g. the single slow pulse on the hero's core node). */
+    *:not([data-rm-ok]),
     *::before,
     *::after {
       animation-duration: 0.01ms !important;

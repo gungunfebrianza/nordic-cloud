@@ -17,7 +17,8 @@ Marketing landing page for **{{BRAND}}**. Static Next.js export, light theme onl
 | `npm run check:brand` | Banned words, `text-pulse` misuse |
 | `npm run check:budget` | Gzipped initial JS for `/` ≤ 150 KB (needs a build) |
 | `npm test` | Playwright smoke + screenshot tests against `out/` (needs a build) |
-| `npm run lighthouse` | Lighthouse mobile ×3, median run, fails under budget (needs a build) |
+| `npm run lighthouse` | Lighthouse mobile, simulated ×3 + devtools-throttled ×3, medians, fails under budget (needs a build) |
+| `npm run measure:hero` | Hero canvas lazy chunk size (gzip) and frame rate in 3 scenarios (needs a build) |
 | `npm run check` | Everything above except Lighthouse, in order |
 | `npm run posters` | Regenerate the placeholder AVIF posters |
 
@@ -105,18 +106,31 @@ Source of truth: `src/lib/motion.ts` (JS, for `motion/react`) and the motion tok
 
 Enforced by `npm run check:budget`, `npm run lighthouse` and the Playwright suite.
 
-| Metric | Budget | Current (scaffold, 2026-10-13) |
+| Metric | Budget | Current (after #hero, 2026-10-13) |
 |---|---|---|
-| Lighthouse mobile Performance | ≥ 90 | 99 |
+| Lighthouse mobile Performance | ≥ 90 | 96 (simulated) / 96 (devtools) |
 | Lighthouse Accessibility | ≥ 95 | 100 |
 | Lighthouse Best Practices | ≥ 95 | 100 |
 | Lighthouse SEO | ≥ 95 | 100 |
-| LCP (throttled 4G, mobile) | < 2.0 s | 1.86 s |
+| LCP (throttled 4G, mobile) | < 2.0 s | 1.65 s measured (devtools); 2.64 s Lantern estimate, see below |
 | CLS | < 0.05 | 0 |
-| INP | < 200 ms | lab proxy: TBT 81 ms |
-| Initial JS, gzipped | ≤ 150 KB (lazy hero canvas excluded) | 134.7 KB |
+| INP | < 200 ms | lab proxy: TBT 128–187 ms |
+| Initial JS, gzipped | ≤ 150 KB (lazy hero canvas excluded) | 136.5 KB |
+| Hero canvas chunk, gzipped | (excluded; keep small) | 3.7 KB |
+
+**How LCP is measured.** `npm run lighthouse` runs both throttling modes. *devtools* really throttles
+(150 ms RTT, 1.6 Mbps, 4× CPU) and observes; it gates LCP/CLS/TBT. *simulated* (Lantern, what
+PageSpeed Insights shows) estimates from an unthrottled load and gates the category scores. On this
+site Lantern's LCP estimate is ~2.6 s even for the bare scaffold, because on localhost first paint
+happens after every script has downloaded, so Lantern puts all ~137 KB of framework JS on the LCP
+path. The script prints a warning when the estimate is over 2.0 s. Bringing the estimate down means
+shipping less framework JS before first paint. (The scaffold's earlier "LCP 1.86 s" was a single
+simulated run that did not reproduce.)
 
 - **Nothing heavy in the critical path**: no video, no WebGL, no 3D library before first paint. The hero canvas is a lazily imported module whose chunk name contains `hero-canvas` (that is what the budget script excludes).
+- **Hero LCP element.** The H1 words rise individually (transform only, opacity 1 from frame one), which
+  makes each word its own LCP candidate, so Chrome reports the sub-paragraph as LCP. It paints in the
+  same first frame, so LCP time is unaffected. Never fade hero text in from opacity 0.
 - **Headroom is small.** Next.js + React alone are ~125 KB of the 150 KB. `motion` must be loaded as `LazyMotion` + `m` with `domAnimation` features, ideally lazily. Importing the full `motion` component on the first screen will break the budget.
 - **Fonts**: `latin` subset only (covers Danish æ ø å). Only Space Grotesk and Inter are preloaded; JetBrains Mono is not (`preload: false`). Adding subsets or weights costs LCP.
 - **Media**: every video has an AVIF poster; layout space comes from the poster's aspect ratio; videos are `preload="none"` and mounted near the viewport.
@@ -129,7 +143,11 @@ Enforced by `npm run check:budget`, `npm run lighthouse` and the Playwright suit
 ```
 src/app/                 layout.tsx (fonts, metadata), page.tsx (section order), globals.css, icon.svg
 src/styles/tokens.css    ALL design tokens (@theme). No raw hex anywhere else, except SVG/poster generators.
-src/lib/motion.ts        ALL motion constants + useMotionVariants()
+src/lib/motion-constants.ts  motion constants, no dependencies (safe for lazy/canvas code)
+src/lib/motion.ts        re-exports the constants + useMotionVariants() (pulls in motion/react)
+src/components/hero/     Hero (server), NetworkSnapshot (SVG, server), NetworkStage + AgentsOnlineChip
+                         (client), hero-canvas.ts (lazy 2D canvas, no React), graph.ts (shared layout),
+                         hero.css (imported from globals.css, so there is one render-blocking stylesheet)
 src/content/site.ts      BRAND, tagline, nav items, section ids. All copy lives in src/content/.
 src/content/demo.ts      EVERY demo/illustrative number, wrapped in demo(value, note) → { DEMO: true }
 src/components/<area>/   Hand-built components, PascalCase.tsx, one component per file
@@ -148,6 +166,10 @@ scripts/                 serve, budget, brand, lighthouse, posters
 - **Copy**: short sentences, calm, precise. No banned words (`check:brand` enforces it).
 - **Accessibility**: one `h1`, sections are labelled landmarks, visible focus ring (`signal`), skip link, `aria-expanded` on toggles.
 - **Pinned versions** (`.npmrc save-exact`). TypeScript is on 6.0.3, not 7.x: typescript-eslint does not support TS 7 yet. Revisit when it does.
+- **Reduced-motion exceptions**: the global reduced-motion rule stops all CSS animation. Mark the rare
+  motion the brief keeps (the hero core-node pulse) with `data-rm-ok`.
+- **Canvas code** reads colours from the CSS tokens at mount (`getComputedStyle`), not hard-coded hex.
+- **Measuring the hero**: `npm run measure:hero` reports the lazy chunk size and frame rate.
 - **Section anchors**: `#hero #products #how #use-cases #security #pricing #faq #cta`, defined in `SECTIONS`; the smoke test asserts the order.
 
 ---

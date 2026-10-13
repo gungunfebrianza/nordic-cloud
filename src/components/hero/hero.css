@@ -1,0 +1,212 @@
+/* Hero: background, word rise, CTA hover, stage cross-fade. Values come from tokens.css. */
+
+/* Dot grid: 24px spacing in the line colour. */
+.hero {
+  background-color: var(--color-paper);
+  background-image: radial-gradient(circle at 1px 1px, var(--color-line) 1px, transparent 1.5px);
+  background-size: 24px 24px;
+  background-position: -1px -1px;
+}
+
+/* One large, soft aurora glow behind the network at ~12%. A pre-softened radial gradient
+   instead of filter: blur(), which looks the same and is far cheaper to paint. */
+.hero-glow {
+  position: absolute;
+  inset: -12% -10%;
+  pointer-events: none;
+  opacity: 0.12;
+  background: radial-gradient(
+    closest-side,
+    var(--color-aurora) 0%,
+    var(--color-signal) 38%,
+    var(--color-pulse) 62%,
+    transparent 100%
+  );
+}
+
+/* H1 words rise in with a 70 ms stagger. Opacity stays 1 from the first frame, so the hero copy
+   is fully painted at first paint (no fade gating LCP). Transform-only: composited, no CLS.
+   Note: animating words individually makes each word its own LCP candidate, so Chrome reports the
+   sub-paragraph as the LCP element. It paints in the same first frame, so LCP time is unchanged. */
+.hero-word {
+  display: inline-block;
+  animation: hero-rise var(--duration-entrance) var(--ease-entrance) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+@keyframes hero-rise {
+  from {
+    transform: translateY(0.35em);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* CTAs: lift 2px with a soft signal-blue glow, spring-eased. */
+.hero-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.875rem;
+  padding-inline: 1.375rem;
+  border-radius: var(--radius-pill);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  isolation: isolate;
+  transition:
+    translate var(--duration-micro-spring) var(--ease-spring),
+    box-shadow var(--duration-micro-spring) var(--ease-spring),
+    background-color var(--duration-micro) var(--ease-entrance),
+    border-color var(--duration-micro) var(--ease-entrance);
+}
+
+.hero-cta:hover,
+.hero-cta:focus-visible {
+  translate: 0 -2px;
+}
+
+.hero-cta:active {
+  translate: 0 0;
+}
+
+.hero-cta--primary {
+  background: var(--color-signal);
+  color: var(--color-surface);
+  box-shadow:
+    0 1px 0 rgb(10 16 32 / 0.06),
+    0 6px 16px -8px rgb(41 98 255 / 0.5);
+}
+
+.hero-cta--primary:hover,
+.hero-cta--primary:focus-visible {
+  box-shadow:
+    0 1px 0 rgb(10 16 32 / 0.06),
+    0 10px 28px -8px rgb(41 98 255 / 0.55);
+}
+
+.hero-cta--ghost {
+  background: rgb(255 255 255 / 0.6);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 0 0 rgb(41 98 255 / 0);
+}
+
+.hero-cta--ghost:hover,
+.hero-cta--ghost:focus-visible {
+  background: var(--color-surface);
+  border-color: rgb(41 98 255 / 0.35);
+  box-shadow: 0 8px 22px -10px rgb(41 98 255 / 0.4);
+}
+
+/* Primary CTA hover: a static 1px aurora border fades in (200 ms). No rotation. */
+.hero-cta--primary::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--gradient-aurora);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity var(--duration-micro) var(--ease-entrance);
+  pointer-events: none;
+}
+
+.hero-cta--primary:hover::before,
+.hero-cta--primary:focus-visible::before {
+  opacity: 1;
+}
+
+/* …and emits one heartbeat ring: a single 2.4 s expand-and-fade, not a loop. */
+.hero-cta--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--color-signal);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero-cta--primary:hover::after {
+  animation: hero-cta-ring var(--heartbeat) linear 1;
+}
+
+@keyframes hero-cta-ring {
+  0% {
+    transform: scale(1, 1);
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.18, 1.6);
+    opacity: 0;
+  }
+}
+
+/* Stage: cross-fade from the SVG snapshot to the canvas once the canvas has drawn a frame. */
+.hero-stage .hero-snapshot,
+.hero-stage .hero-canvas {
+  transition: opacity var(--duration-entrance-min) var(--ease-entrance);
+}
+
+.hero-stage .hero-canvas {
+  opacity: 0;
+}
+
+.hero-stage[data-state="live"] .hero-canvas {
+  opacity: 1;
+}
+
+.hero-stage[data-state="live"] .hero-snapshot {
+  opacity: 0;
+}
+
+.hero-tooltip {
+  opacity: 0;
+  transition: opacity var(--duration-micro-min) var(--ease-entrance);
+  will-change: transform;
+}
+
+.hero-tooltip[data-visible="true"] {
+  opacity: 1;
+}
+
+/* Snapshot core pulse: slow (two heartbeats), the only motion kept under reduced motion. */
+.hero-core-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hero-core-pulse calc(var(--heartbeat) * 2) linear infinite;
+}
+
+@keyframes hero-core-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta--primary::after {
+    display: none;
+  }
+}
