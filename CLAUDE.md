@@ -123,7 +123,8 @@ Enforced by `npm run check:budget`, `npm run lighthouse` and the Playwright suit
 same build swing by ±100 ms TBT and ±0.4 s simulated LCP. Where the main thread goes (4× CPU trace):
 React hydration ~300 ms, first style+layout ~150–250 ms, lazy chunk evaluation. #products added
 ~40 ms hydration and ~100 ms first render. Confirm on a real mid-range phone / PageSpeed Insights
-before major surgery.
+before major surgery. **Decision (Haze, 2026-10-13):** keep building; optimise only if PageSpeed
+Insights or a real phone fails the budget after deploy.
 
 **How LCP is measured.** `npm run lighthouse` runs both throttling modes. *devtools* really throttles
 (150 ms RTT, 1.6 Mbps, 4× CPU) and observes; it gates LCP/CLS/TBT. *simulated* (Lantern, what
