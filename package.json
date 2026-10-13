@@ -1,0 +1,44 @@
+{
+  "name": "brand-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "node scripts/serve.mjs",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:budget": "node scripts/check-budget.mjs",
+    "test": "playwright test",
+    "lighthouse": "node scripts/lighthouse.mjs",
+    "check:brand": "node scripts/check-brand.mjs",
+    "posters": "node scripts/make-posters.mjs",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run check:brand && npm run build && npm run check:budget && npm test"
+  },
+  "dependencies": {
+    "lucide-react": "1.55.0",
+    "motion": "14.1.0",
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "chrome-launcher": "1.2.2",
+    "eslint": "10.12.0",
+    "eslint-config-next": "16.4.0",
+    "lighthouse": "13.5.0",
+    "prettier": "3.9.10",
+    "prettier-plugin-tailwindcss": "0.8.1",
+    "sharp": "0.35.5",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3"
+  }
+}

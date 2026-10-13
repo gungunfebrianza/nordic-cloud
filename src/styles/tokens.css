@@ -1,0 +1,100 @@
+/*
+ * Brand tokens: the single source of truth for colour, type, radius and motion.
+ * Every value below comes from the brand brief (see CLAUDE.md). Change them here, nowhere else.
+ *
+ * Tailwind v4 reads @theme and generates utilities from it:
+ *   --color-ink        -> text-ink, bg-ink, border-ink, fill-ink, stroke-ink
+ *   --font-display     -> font-display
+ *   --radius-card      -> rounded-card
+ *   --ease-entrance    -> ease-entrance
+ *   --animate-heartbeat -> animate-heartbeat
+ * Every token is also a plain CSS custom property on :root, for SVG and inline styles.
+ */
+
+@theme static {
+  /* Reset Tailwind's default palette so only brand colours exist. */
+  --color-*: initial;
+
+  /* ── Colour (light theme only in v1) ─────────────────────────────── */
+  --color-paper: #f6f8fc; /* page background */
+  --color-surface: #ffffff; /* cards, panels */
+  --color-ink: #0a1020; /* primary text */
+  --color-ink-muted: #5a6478; /* secondary text */
+  --color-line: #e3e8f2; /* hairlines, borders, idle links */
+  --color-signal: #2962ff; /* primary actions, links, main agent colour (AA on white) */
+  --color-pulse: #00c8ff; /* activity, packets, live data. GRAPHICS ONLY, never body text */
+  --color-aurora: #7b5cff; /* multi-agent coordination, accents */
+  --color-live: #10c98a; /* online, healthy, success */
+  --color-alert: #ff4b3e; /* threats, anomalies. Use sparingly */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Aurora gradient: at most 1–2 elements per screen. Use the .bg-aurora utility. */
+  --gradient-aurora: linear-gradient(120deg, #00c8ff 0%, #2962ff 50%, #7b5cff 100%);
+
+  /* ── Type ────────────────────────────────────────────────────────── */
+  /* Families are filled in by next/font (self-hosted) via layout.tsx; see @theme inline below. */
+  --tracking-display: -0.02em;
+  --font-weight-display: 600;
+  --font-weight-display-bold: 700;
+
+  /* ── Shape ───────────────────────────────────────────────────────── */
+  --radius-sm: 16px;
+  --radius-card: 20px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
+  --border-hairline: 1px;
+
+  /* ── Motion: "the heartbeat" ─────────────────────────────────────── */
+  --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-linear: linear;
+
+  --duration-micro: 200ms; /* micro-interactions: 150–250 ms */
+  --duration-micro-min: 150ms;
+  --duration-micro-max: 250ms;
+  --duration-entrance: 750ms; /* entrances: 600–900 ms */
+  --duration-entrance-min: 600ms;
+  --duration-entrance-max: 900ms;
+  --stagger: 70ms; /* entrance stagger: 60–80 ms */
+  --stagger-min: 60ms;
+  --stagger-max: 80ms;
+  --packet-hop-min: 800ms; /* packet travel per hop: 0.8–1.6 s */
+  --packet-hop-max: 1600ms;
+  --heartbeat: 2400ms; /* HEARTBEAT; ambient loops are whole multiples of this */
+
+  --animate-heartbeat: heartbeat 2400ms linear infinite;
+
+  @keyframes heartbeat {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    70% {
+      opacity: 0;
+    }
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+}
+
+/* Families reference next/font variables, so they must resolve at use time (inline). */
+@theme inline {
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
+}
+
+@utility bg-aurora {
+  background-image: var(--gradient-aurora);
+}
+
+@utility tracking-display {
+  letter-spacing: var(--tracking-display);
+}
+
+/* Phase offset for anything that ticks to the heartbeat: style={{ "--phase": "0.3" }} */
+@utility heartbeat-phase {
+  animation-delay: calc(var(--phase, 0) * -2400ms);
+}
