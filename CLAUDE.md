@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-Marketing landing page for **{{BRAND}}**. Static Next.js export, light theme only, hand-built components.
+Marketing landing page for **Serperku**. Static Next.js export, light theme only, hand-built components.
 
-> The brand name is not final. It is the literal placeholder `{{BRAND}}`, held in **one** constant:
-> `src/content/site.ts` → `export const BRAND = "{{BRAND}}"`. Every visible use reads that constant.
-> Never hard-code or invent a brand name anywhere else.
+> The brand name is **Serperku** (set 2026-10-13; it was the placeholder `{{BRAND}}` before), held in **one**
+> constant: `src/content/site.ts` → `export const BRAND = "Serperku"`. Every visible use reads that constant.
+> Never hard-code the brand name anywhere else.
 
 ## Commands
 
@@ -19,6 +19,7 @@ Marketing landing page for **{{BRAND}}**. Static Next.js export, light theme onl
 | `npm test` | Playwright smoke + screenshot tests against `out/` (needs a build) |
 | `npm run lighthouse` | Lighthouse mobile, simulated ×3 + devtools-throttled ×3, medians, fails under budget (needs a build) |
 | `npm run measure:hero` | Hero canvas lazy chunk size (gzip) and frame rate in 3 scenarios (needs a build) |
+| `npm run measure:how` | #how controller chunk size (gzip) and frame rate while scrolling and looping (needs a build) |
 | `npm run check` | Everything above except Lighthouse, in order |
 | `npm run posters` | Regenerate the placeholder AVIF posters |
 
@@ -29,10 +30,10 @@ Sandboxes without Playwright's own browser: set `PLAYWRIGHT_CHROMIUM_PATH` (test
 ## Brand brief (verbatim)
 
 ```
-BRAND BRIEF — {{BRAND}}
+BRAND BRIEF — {{Serperku}}
 
 COMPANY
-{{BRAND}} is a Copenhagen-based, EU-hosted cloud for always-on AI agents.
+{{Serperku}} is a Jakarta-Singapore-Copenhagen-based, EU-hosted cloud for always-on AI agents.
 Products:
   1. Always-on bots — single agents that run 24/7: scheduled, event-driven or webhook-triggered.
   2. Agent VPS — dedicated virtual servers pre-built for agent runtimes, GPU optional.
@@ -106,18 +107,19 @@ Source of truth: `src/lib/motion.ts` (JS, for `motion/react`) and the motion tok
 
 Enforced by `npm run check:budget`, `npm run lighthouse` and the Playwright suite.
 
-| Metric | Budget | Current (after #products, 2026-10-13; see "Sandbox noise") |
+| Metric | Budget | Current (after #how, 2026-10-13; see "Sandbox noise") |
 |---|---|---|
-| Lighthouse mobile Performance | ≥ 90 | simulated 93–96 ✓ / devtools 82–88 ✗ |
+| Lighthouse mobile Performance | ≥ 90 | simulated 95 ✓ / devtools 90 (82–88 after #products) |
 | Lighthouse Accessibility | ≥ 95 | 100 |
 | Lighthouse Best Practices | ≥ 95 | 100 |
 | Lighthouse SEO | ≥ 95 | 100 |
-| LCP (throttled 4G, mobile) | < 2.0 s | devtools 1.83–2.04 s (borderline); Lantern estimate 2.0–2.9 s |
+| LCP (throttled 4G, mobile) | < 2.0 s | devtools 1.89 s; Lantern estimate 2.0–2.9 s |
 | CLS | < 0.05 | 0 |
-| INP | < 200 ms | lab proxy TBT: devtools 440–610 ms ✗ (hero-only build: 283 ms, same day) |
-| Initial JS, gzipped | ≤ 150 KB (lazy chunks excluded) | 137.5 KB |
+| INP | < 200 ms | lab proxy TBT: devtools 348 ms ✗ (440–610 after #products; hero-only 283) |
+| Initial JS, gzipped | ≤ 150 KB (lazy chunks excluded) | 138.6 KB |
 | Hero canvas chunk, gzipped | (lazy; keep small) | 4.8 KB (includes precomputed graph) |
 | Products motion chunk, gzipped | (lazy; keep small) | 5.1 KB |
+| #how useScroll controller chunk, gzipped | (lazy, desktop only; keep small) | 6.9 KB (includes motion/react's useScroll) |
 
 **Sandbox noise.** These runs happen in a cloud container with no GPU. Repeated Lighthouse runs on the
 same build swing by ±100 ms TBT and ±0.4 s simulated LCP. Where the main thread goes (4× CPU trace):
@@ -144,6 +146,12 @@ simulated run that did not reproduce.)
   `animate` from `motion/mini` (WAAPI, ~5 KB) plus `inView`/`stagger` from `motion`. Use the
   individual CSS transform properties (`rotate`, `translate`, `scale`) in keyframes. The hover lift
   owns `translate` on cards, so entrances animate `transform` instead.
+- **Scroll-linked motion** (pattern from #how): server-render every state; CSS transitions keyed on a
+  `data-step` attribute do the morphs. A tiny client component `React.lazy()`-loads a controller near
+  the viewport (desktop only) that uses `useScroll` from `motion/react` purely to *read* progress and
+  set `data-step`. `motion/react` stays out of the initial bundle this way. Never use it to scroll.
+- **Loops are CSS animations, paused by default** (`.how-loop`), and run only under
+  `[data-running="true"]` set by an IntersectionObserver, so off-screen and hidden-tab cost is zero.
 - **No module-level heavy work in lazy chunks.** The hero force layout is precomputed into
   `graph-data.ts` (`npm run gen:graph`); a test fails if it drifts from `buildGraph()`.
 - **`content-visibility: auto` was tried and rejected**: estimated section heights make nav anchor
@@ -164,6 +172,9 @@ src/lib/motion-constants.ts  motion constants, no dependencies (safe for lazy/ca
 src/lib/motion.ts        re-exports the constants + useMotionVariants() (pulls in motion/react)
 src/components/products/ Products, ProductCard, diagrams/* (server SVG), CompareTable + ProductsMotion
                          (client), products-motion.ts (lazy, motion/mini), products.css
+src/components/how/      How, CodePanel, Scene, Dashboard, BrandFilm (server); HowScroll, BrandFilmPlayer
+                         (client); how-scroll.tsx (lazy, useScroll); europe-data.ts (generated by
+                         scripts/gen-europe.mjs from Natural Earth, public domain); how.css
 src/components/hero/     Hero (server), NetworkSnapshot (SVG, server), NetworkStage + AgentsOnlineChip
                          (client), hero-canvas.ts (lazy 2D canvas, no React), graph.ts (shared layout),
                          hero.css (imported from globals.css, so there is one render-blocking stylesheet)
@@ -190,7 +201,10 @@ scripts/                 serve, budget, brand, lighthouse, posters
 - **Canvas code** reads colours from the CSS tokens at mount (`getComputedStyle`), not hard-coded hex.
 - **Measuring**: `npm run measure:hero` / `npm run measure:products` report lazy chunk size and frame rate.
 - **Placeholders**: `{{PRICE_BOTS}}`, `{{PRICE_VPS}}`, `{{PRICE_CLUSTERS}}` live in `src/content/products.ts`
-  (same rule as `{{BRAND}}`); compare-table rows there are placeholders for Haze to fill.
+  (one constant each, like `BRAND`); compare-table rows there are placeholders for Haze to fill.
+  `{{DATACENTER_LOCATIONS}}` (map label in #how) lives in `src/content/how.ts`.
+- **Brand film**: `BrandFilm.tsx` checks `public/media` at build time. Without `brand-film.{webm,mp4}`
+  and `brand-film.en.vtt` it shows the poster and "Film coming soon"; with them, a click-to-play player.
 - **Section anchors**: `#hero #products #how #use-cases #security #pricing #faq #cta`, defined in `SECTIONS`; the smoke test asserts the order.
 
 ---

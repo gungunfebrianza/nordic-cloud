@@ -36,3 +36,6 @@ Replace each with a real frame from its film (same file name, same aspect ratio)
   ledgers). No humanoid robots, glowing brains, circuit-board clichés, stock people at screens, or real company
   or coin logos.
 - **Captions:** the brand film ships with `brand-film.en.vtt` before launch.
+- **Brand film in #how:** the page checks for the film at build time. Until at least one of
+  `brand-film.webm` / `brand-film.mp4` **and** `brand-film.en.vtt` are here, the frame shows the poster with
+  "Film coming soon". Add the files and rebuild; the click-to-play player appears with no code change.

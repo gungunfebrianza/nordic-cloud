@@ -1,0 +1,506 @@
+/* #how: sticky panel (desktop), stacked step visuals (mobile), state morphs, loops, brand film.
+   States are keyed on the nearest .how-stage[data-step]: the desktop .how-panel (set by the lazy
+   controller as you scroll) or a mobile .how-visual (fixed to its step). */
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+
+.how-panel-col {
+  display: none;
+}
+
+.how-steps {
+  display: grid;
+  gap: 4rem;
+}
+
+.how-step {
+  min-width: 0;
+}
+
+.how-visual {
+  min-width: 0;
+  margin-top: 1.5rem;
+  transition:
+    opacity var(--duration-entrance) var(--ease-entrance),
+    translate var(--duration-entrance) var(--ease-entrance);
+}
+
+.how-visual[data-armed="true"] {
+  opacity: 0;
+  translate: 0 16px;
+}
+
+@media (min-width: 1024px) {
+  .how-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+    gap: 4rem;
+  }
+
+  .how-panel-col {
+    display: block;
+  }
+
+  .how-panel {
+    position: sticky;
+    top: max(5rem, calc(50vh - 17rem));
+    padding-block: 2rem;
+  }
+
+  .how-steps {
+    gap: 0;
+  }
+
+  /* Equal step heights, so useScroll progress maps evenly onto the four states. */
+  .how-step {
+    min-height: 78vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .how-visual {
+    display: none;
+  }
+
+  /* Once the controller is live, the step being shown is ink and the others recede. */
+  .how-step-text {
+    transition: opacity var(--duration-entrance) var(--ease-entrance);
+  }
+
+  [data-scroll] .how-step:not([data-current]) .how-step-text {
+    opacity: 0.38;
+  }
+}
+
+/* ── The panel frame ────────────────────────────────────────────────────── */
+
+.how-panel-frame {
+  position: relative;
+  aspect-ratio: 8 / 7; /* = the 480×420 scene, so the node's % position lines up */
+  container-type: inline-size;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-paper);
+  background-image: radial-gradient(circle at 1px 1px, var(--color-line) 1px, transparent 1.5px);
+  background-size: 18px 18px;
+}
+
+.how-panel-frame > * {
+  position: absolute;
+  transition:
+    opacity var(--duration-entrance) var(--ease-entrance),
+    scale var(--duration-entrance) var(--ease-entrance),
+    translate var(--duration-entrance) var(--ease-entrance);
+}
+
+.how-panel-frame > .how-scene {
+  inset: 0;
+}
+
+.how-panel-frame > .how-code,
+.how-panel-frame > .how-dash {
+  inset: 1.25rem;
+}
+
+/* Step 1 → 2: the config compresses into a container on the node. */
+.how-panel:not([data-step="1"]) .how-code {
+  opacity: 0;
+  scale: 0.06;
+  translate: calc((var(--node-x) - 50) * 1cqw) calc((var(--node-y) - 50) * 0.875cqw);
+}
+
+.how-panel[data-step="1"] .how-scene,
+.how-panel[data-step="4"] .how-scene {
+  opacity: 0;
+}
+
+.how-panel:not([data-step="4"]) .how-dash {
+  opacity: 0;
+  translate: 0 12px;
+}
+
+/* Rail: where you are in the four steps. The fill follows scroll progress (set by the controller). */
+.how-rail {
+  margin-top: 1rem;
+}
+
+.how-rail-track {
+  height: 1px;
+  background: var(--color-line);
+}
+
+.how-rail-fill {
+  height: 1px;
+  background: var(--color-signal);
+  transform-origin: left;
+  scale: 0 1;
+}
+
+.how-rail-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink-muted);
+}
+
+.how-panel[data-step="1"] .how-rail-steps [data-n="1"],
+.how-panel[data-step="2"] .how-rail-steps [data-n="2"],
+.how-panel[data-step="3"] .how-rail-steps [data-n="3"],
+.how-panel[data-step="4"] .how-rail-steps [data-n="4"] {
+  color: var(--color-ink);
+}
+
+/* ── Code panel (step 1) ────────────────────────────────────────────────── */
+
+.how-code {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 0.86);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 20px 40px -28px rgb(10 16 32 / 0.25);
+}
+
+.how-code-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+.how-code-pre {
+  margin: 0;
+  padding: 0.875rem 1rem 1rem 0;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-ink);
+  counter-reset: line;
+  white-space: pre;
+}
+
+.how-visual .how-code-pre {
+  overflow-x: auto;
+  font-size: 11px;
+}
+
+@media (min-width: 1280px) {
+  .how-code-pre {
+    font-size: 13px;
+  }
+}
+
+.how-code-line {
+  display: block;
+  min-height: 1lh;
+  counter-increment: line;
+}
+
+/* Lines not reached yet keep their space but stay blank while the config types out. */
+.how-code-line[data-pending] {
+  visibility: hidden;
+}
+
+.how-code-line::before {
+  content: counter(line);
+  display: inline-block;
+  width: 2.75em;
+  padding-right: 1em;
+  text-align: right;
+  color: var(--color-ink-muted);
+  opacity: 0.55;
+}
+
+.tok-k,
+.tok-p,
+.tok-c {
+  color: var(--color-ink-muted);
+}
+
+.tok-s {
+  color: var(--color-signal);
+}
+
+/* The caret shows only while typing; it blinks on the heartbeat (on/off, 2.4 s loop). */
+.how-caret {
+  display: none;
+}
+
+.how-panel[data-typing="true"] .how-caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.15em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--color-signal);
+  animation: how-caret var(--heartbeat) steps(1) infinite;
+}
+
+@keyframes how-caret {
+  0%,
+  25%,
+  50%,
+  75% {
+    opacity: 1;
+  }
+  12.5%,
+  37.5%,
+  62.5%,
+  87.5% {
+    opacity: 0;
+  }
+}
+
+/* ── Scene (steps 2 and 3) ──────────────────────────────────────────────── */
+
+.how-scene * {
+  transition:
+    opacity var(--duration-entrance) var(--ease-entrance),
+    translate var(--duration-entrance) var(--ease-entrance),
+    fill var(--duration-entrance) var(--ease-entrance),
+    stroke-dashoffset var(--duration-entrance) var(--ease-entrance);
+}
+
+.how-dk {
+  fill: var(--color-ink-muted);
+  fill-opacity: 0.35;
+}
+
+.how-glow,
+.how-label,
+.how-container,
+.how-ring-g,
+.how-agent,
+.how-packet {
+  opacity: 0;
+}
+
+.how-container {
+  translate: 0 -36px;
+}
+
+.how-link {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.how-agent {
+  translate: var(--dx) var(--dy);
+}
+
+/* Step 2: Denmark glows, the container drops onto the node, the label names where it runs. */
+.how-stage:is([data-step="2"], [data-step="3"]) .how-dk {
+  fill: var(--color-signal);
+  fill-opacity: 1;
+}
+
+.how-stage:is([data-step="2"], [data-step="3"]) :is(.how-glow, .how-ring-g) {
+  opacity: 1;
+}
+
+.how-stage:is([data-step="2"], [data-step="3"]) .how-container {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: 250ms;
+}
+
+.how-stage[data-step="2"] .how-label {
+  opacity: 1;
+  transition-delay: 500ms;
+}
+
+/* Step 3: the map recedes; agents spawn from the node 70 ms apart, links draw, packets flow. */
+.how-stage[data-step="3"] .how-map {
+  opacity: 0.4;
+}
+
+.how-stage[data-step="3"] .how-agent {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: calc(var(--i) * var(--stagger));
+}
+
+.how-stage[data-step="3"] .how-link {
+  stroke-dashoffset: 0;
+  transition-delay: calc(200ms + var(--i) * var(--stagger));
+}
+
+.how-stage[data-step="3"] .how-packet {
+  opacity: 1;
+  transition-delay: 600ms;
+}
+
+.how-packet {
+  animation-name: how-packet;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes how-packet {
+  0% {
+    translate: 0 0;
+  }
+  33.333% {
+    translate: var(--ax) var(--ay);
+  }
+  66.667% {
+    translate: var(--bx) var(--by);
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+.how-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heartbeat var(--heartbeat) linear infinite;
+}
+
+/* ── Dashboard (step 4) ─────────────────────────────────────────────────── */
+
+.how-dash {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 0.9);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 20px 40px -28px rgb(10 16 32 / 0.25);
+}
+
+.how-dot-ring {
+  animation: heartbeat var(--heartbeat) linear infinite;
+}
+
+.how-ecg {
+  animation: how-ecg var(--heartbeat) linear infinite;
+}
+
+@keyframes how-ecg {
+  to {
+    translate: -120px 0;
+  }
+}
+
+.how-log {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  margin-top: 0.875rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.85;
+}
+
+.how-log li {
+  display: grid;
+  grid-template-columns: auto 2.75rem minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.how-warn {
+  color: var(--color-ink);
+}
+
+.how-warn::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  border-radius: 9999px;
+  background: var(--color-alert);
+  vertical-align: 1px;
+}
+
+.how-log-new {
+  animation: how-log-in var(--duration-micro) var(--ease-entrance);
+}
+
+@keyframes how-log-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+/* ── Loops run only when visible (and, on desktop, only in their own step) ─ */
+
+.how-loop {
+  animation-play-state: paused;
+}
+
+.how-stage[data-running="true"] .how-loop {
+  animation-play-state: running;
+}
+
+.how-panel:not([data-step="3"]) .how-packet,
+.how-panel:not(:is([data-step="2"], [data-step="3"])) .how-ring,
+.how-panel:not([data-step="4"]) :is(.how-ecg, .how-dot-ring) {
+  animation-play-state: paused;
+}
+
+/* ── Brand film ─────────────────────────────────────────────────────────── */
+
+.how-film-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.how-film-frame video {
+  display: block;
+}
+
+.how-film-soon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(8px);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-ink);
+}
+
+.how-film-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  padding-left: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-signal);
+  color: var(--color-surface);
+  box-shadow: 0 12px 32px -12px rgb(41 98 255 / 0.6);
+  transition: scale var(--duration-micro) var(--ease-spring);
+}
+
+.how-film-play:hover {
+  scale: 1.05;
+}

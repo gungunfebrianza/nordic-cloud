@@ -1,5 +1,5 @@
 /**
- * #products copy. Prices are placeholders, like BRAND: one constant each, never invented.
+ * #products copy. Prices are placeholders: one constant each, never invented.
  */
 export const PRICE_BOTS = "{{PRICE_BOTS}}";
 export const PRICE_VPS = "{{PRICE_VPS}}";

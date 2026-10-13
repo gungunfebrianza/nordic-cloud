@@ -25,6 +25,11 @@ export const DEMO = {
     "How the demo agent count wanders: ±1–6 every 3–5 s, never more than 3% from the start value.",
   ),
   queueDepth: demo(42, "Illustrative queue depth in the cluster diagram"),
+  howUptimeSeconds: demo(
+    412 * 86_400 + 6 * 3_600 + 13 * 60 + 52,
+    "#how dashboard: the agent's uptime when the panel first shows. Invented; counts up client-side.",
+  ),
+  howTeamSize: demo(5, "#how dashboard: agents in the example team"),
 } as const;
 
 /**
@@ -62,4 +67,29 @@ export const DEMO_NODE_LABELS = demo(
     ],
   },
   "Hero network tooltips. Invented names, activities and uptimes.",
+);
+
+/**
+ * #how dashboard log stream. Invented. The panel shows the first 9, then appends one line per
+ * heartbeat, cycling through the list. Times start at `start` and advance 2.4 s per line.
+ */
+export const DEMO_HOW_LOGS = demo(
+  {
+    start: "09:41:12",
+    lines: [
+      ["info", "run 18231 started · trigger cron"],
+      ["info", "postgres.read settlements · 1,204 rows"],
+      ["info", "matched 1,198 · flagged 6"],
+      ["warn", "flagged 6 → approval queue"],
+      ["info", "slack.notify #finance-ops · sent"],
+      ["info", "run 18231 done · 3.8 s"],
+      ["info", "heartbeat ok · 5/5 agents"],
+      ["info", "fx-watcher → ledger-reconciler · 2 msgs"],
+      ["info", "memory.write recon/2026-10 · 6 keys"],
+      ["info", "trace 7f3a… closed · 11 spans"],
+      ["info", "heartbeat ok · 5/5 agents"],
+      ["info", "queue settlements · depth 0"],
+    ] as const satisfies readonly (readonly ["info" | "warn", string])[],
+  },
+  "#how dashboard log lines. Invented run ids, counts and timings.",
 );
