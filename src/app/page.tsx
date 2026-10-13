@@ -1,5 +1,6 @@
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/hero/Hero";
+import { Products } from "@/components/products/Products";
 import { Nav } from "@/components/nav/Nav";
 import { Section } from "@/components/Section";
 import { SECTIONS } from "@/content/site";
@@ -18,6 +19,8 @@ export default function Home() {
         {SECTIONS.map((s) =>
           s.id === "hero" ? (
             <Hero key={s.id} />
+          ) : s.id === "products" ? (
+            <Products key={s.id} />
           ) : (
             <Section key={s.id} id={s.id} label={s.label} className="min-h-[50vh]">
               <h2 className="font-mono text-xs font-medium tracking-wider text-ink-muted uppercase">

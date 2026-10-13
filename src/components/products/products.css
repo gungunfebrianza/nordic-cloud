@@ -1,0 +1,179 @@
+/* #products: card hover/focus, aurora border, arrow nudge, diagram states, compare table. */
+
+.product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  isolation: isolate;
+  transition:
+    translate var(--duration-micro-spring) var(--ease-spring),
+    box-shadow var(--duration-micro-spring) var(--ease-spring);
+}
+
+/* 1px aurora gradient border: fades in on hover / focus. */
+.product-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--gradient-aurora);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity var(--duration-micro) var(--ease-entrance);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Hover and keyboard focus look identical. */
+.product-card:hover,
+.product-card:focus-within {
+  translate: 0 -4px;
+  box-shadow: 0 18px 40px -24px rgb(10 16 32 / 0.25);
+}
+
+.product-card:hover::before,
+.product-card:focus-within::before {
+  opacity: 1;
+}
+
+.product-diagram {
+  padding: 1.25rem 1.25rem 0;
+  border-bottom: 1px solid var(--color-line);
+  background-image: radial-gradient(circle at 1px 1px, var(--color-line) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  padding-bottom: 0.875rem;
+}
+
+/* Explore: the link stretches over the whole card (one tab stop), arrow nudges 4px. */
+.product-explore {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-signal);
+  white-space: nowrap;
+}
+
+.product-explore::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  z-index: 1;
+}
+
+/* The focus ring is drawn on the stretched ::after, so it wraps the whole card (no :has()). */
+.product-explore:focus-visible {
+  outline: none;
+}
+
+.product-explore:focus-visible::after {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 3px;
+}
+
+.product-arrow {
+  display: inline-block;
+  transition: translate var(--duration-micro-spring) var(--ease-spring);
+}
+
+.product-card:hover .product-arrow,
+.product-card:focus-within .product-arrow {
+  translate: 4px 0;
+}
+
+/* VPS isolation boundary: glows on hover / focus. */
+.vps-boundary {
+  stroke: var(--color-ink-muted);
+  stroke-opacity: 0.45;
+  transition:
+    stroke var(--duration-micro) var(--ease-entrance),
+    stroke-opacity var(--duration-micro) var(--ease-entrance),
+    filter var(--duration-micro) var(--ease-entrance);
+}
+
+.product-card:hover .vps-boundary,
+.product-card:focus-within .vps-boundary {
+  stroke: var(--color-signal);
+  stroke-opacity: 1;
+  filter: drop-shadow(0 0 4px rgb(41 98 255 / 0.55));
+}
+
+/* Cluster shared memory: fades in on hover / focus. */
+.cluster-memory {
+  opacity: 0;
+  transition: opacity var(--duration-micro) var(--ease-entrance);
+}
+
+.product-card:hover .cluster-memory,
+.product-card:focus-within .cluster-memory {
+  opacity: 1;
+}
+
+/* Cards hidden only once the motion chunk has armed the entrance (never without JS). */
+.product-card[data-armed="true"] {
+  opacity: 0;
+}
+
+/* Compare plans. */
+.compare-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding-inline: 1.25rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-ink);
+  transition:
+    border-color var(--duration-micro) var(--ease-entrance),
+    translate var(--duration-micro-spring) var(--ease-spring);
+}
+
+.compare-toggle:hover {
+  border-color: rgb(41 98 255 / 0.35);
+}
+
+.compare-chevron {
+  transition: rotate 300ms var(--ease-entrance);
+}
+
+.compare-toggle[aria-expanded="true"] .compare-chevron {
+  rotate: 180deg;
+}
+
+/* Height + fade, 300 ms. grid-template-rows 0fr -> 1fr animates to the content's height. */
+.compare-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 300ms var(--ease-entrance),
+    opacity 300ms var(--ease-entrance);
+}
+
+.compare-panel[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.compare-inner {
+  overflow: hidden;
+  min-height: 0;
+}

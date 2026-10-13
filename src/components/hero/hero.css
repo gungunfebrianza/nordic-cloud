@@ -172,6 +172,11 @@
 
 .hero-stage[data-state="live"] .hero-snapshot {
   opacity: 0;
+  /* Once faded out, hide it so its core pulse stops repainting behind the canvas. */
+  visibility: hidden;
+  transition:
+    opacity var(--duration-entrance-min) var(--ease-entrance),
+    visibility 0s linear var(--duration-entrance-min);
 }
 
 .hero-tooltip {

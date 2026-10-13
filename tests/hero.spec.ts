@@ -137,7 +137,10 @@ test.describe("hero", () => {
     await expect(tooltip).toHaveAttribute("data-visible", "false");
   });
 
-  test("agents-online count drifts within its DEMO range", async ({ page }) => {
+  test("agents-online count drifts within its DEMO range", async ({ browser }) => {
+    // Reduced motion keeps the canvas and motion loops off, so the fake clock only drives timers.
+    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const page = await ctx.newPage();
     await page.clock.install();
     await page.goto("/");
     const el = page.getByTestId("agents-online");
@@ -154,6 +157,7 @@ test.describe("hero", () => {
       );
     }
     expect(seen.size).toBeGreaterThan(1);
+    await ctx.close();
   });
 
   test.describe("reduced motion", () => {
@@ -202,4 +206,9 @@ test.describe("hero screenshots", () => {
       await ctx.close();
     });
   }
+});
+
+test("precomputed graph matches buildGraph()", async () => {
+  const { buildGraph, GRAPH } = await import("../src/components/hero/graph");
+  expect(GRAPH).toEqual(buildGraph());
 });

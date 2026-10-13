@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 @import "../components/hero/hero.css";
+@import "../components/products/products.css";
 
 @layer base {
   :root {

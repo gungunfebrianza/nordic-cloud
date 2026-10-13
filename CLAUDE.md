@@ -106,17 +106,24 @@ Source of truth: `src/lib/motion.ts` (JS, for `motion/react`) and the motion tok
 
 Enforced by `npm run check:budget`, `npm run lighthouse` and the Playwright suite.
 
-| Metric | Budget | Current (after #hero, 2026-10-13) |
+| Metric | Budget | Current (after #products, 2026-10-13; see "Sandbox noise") |
 |---|---|---|
-| Lighthouse mobile Performance | ≥ 90 | 96 (simulated) / 96 (devtools) |
+| Lighthouse mobile Performance | ≥ 90 | simulated 93–96 ✓ / devtools 82–88 ✗ |
 | Lighthouse Accessibility | ≥ 95 | 100 |
 | Lighthouse Best Practices | ≥ 95 | 100 |
 | Lighthouse SEO | ≥ 95 | 100 |
-| LCP (throttled 4G, mobile) | < 2.0 s | 1.65 s measured (devtools); 2.64 s Lantern estimate, see below |
+| LCP (throttled 4G, mobile) | < 2.0 s | devtools 1.83–2.04 s (borderline); Lantern estimate 2.0–2.9 s |
 | CLS | < 0.05 | 0 |
-| INP | < 200 ms | lab proxy: TBT 128–187 ms |
-| Initial JS, gzipped | ≤ 150 KB (lazy hero canvas excluded) | 136.5 KB |
-| Hero canvas chunk, gzipped | (excluded; keep small) | 3.7 KB |
+| INP | < 200 ms | lab proxy TBT: devtools 440–610 ms ✗ (hero-only build: 283 ms, same day) |
+| Initial JS, gzipped | ≤ 150 KB (lazy chunks excluded) | 137.5 KB |
+| Hero canvas chunk, gzipped | (lazy; keep small) | 4.8 KB (includes precomputed graph) |
+| Products motion chunk, gzipped | (lazy; keep small) | 5.1 KB |
+
+**Sandbox noise.** These runs happen in a cloud container with no GPU. Repeated Lighthouse runs on the
+same build swing by ±100 ms TBT and ±0.4 s simulated LCP. Where the main thread goes (4× CPU trace):
+React hydration ~300 ms, first style+layout ~150–250 ms, lazy chunk evaluation. #products added
+~40 ms hydration and ~100 ms first render. Confirm on a real mid-range phone / PageSpeed Insights
+before major surgery.
 
 **How LCP is measured.** `npm run lighthouse` runs both throttling modes. *devtools* really throttles
 (150 ms RTT, 1.6 Mbps, 4× CPU) and observes; it gates LCP/CLS/TBT. *simulated* (Lantern, what
@@ -131,6 +138,15 @@ simulated run that did not reproduce.)
 - **Hero LCP element.** The H1 words rise individually (transform only, opacity 1 from frame one), which
   makes each word its own LCP candidate, so Chrome reports the sub-paragraph as LCP. It paints in the
   same first frame, so LCP time is unaffected. Never fade hero text in from opacity 0.
+- **Below-the-fold motion** (pattern from #products): server-render the SVG, then a tiny client
+  component waits for load + idle + near-viewport and `import()`s a chunk that animates with
+  `animate` from `motion/mini` (WAAPI, ~5 KB) plus `inView`/`stagger` from `motion`. Use the
+  individual CSS transform properties (`rotate`, `translate`, `scale`) in keyframes. The hover lift
+  owns `translate` on cards, so entrances animate `transform` instead.
+- **No module-level heavy work in lazy chunks.** The hero force layout is precomputed into
+  `graph-data.ts` (`npm run gen:graph`); a test fails if it drifts from `buildGraph()`.
+- **`content-visibility: auto` was tried and rejected**: estimated section heights make nav anchor
+  jumps land in the wrong place.
 - **Headroom is small.** Next.js + React alone are ~125 KB of the 150 KB. `motion` must be loaded as `LazyMotion` + `m` with `domAnimation` features, ideally lazily. Importing the full `motion` component on the first screen will break the budget.
 - **Fonts**: `latin` subset only (covers Danish æ ø å). Only Space Grotesk and Inter are preloaded; JetBrains Mono is not (`preload: false`). Adding subsets or weights costs LCP.
 - **Media**: every video has an AVIF poster; layout space comes from the poster's aspect ratio; videos are `preload="none"` and mounted near the viewport.
@@ -145,6 +161,8 @@ src/app/                 layout.tsx (fonts, metadata), page.tsx (section order),
 src/styles/tokens.css    ALL design tokens (@theme). No raw hex anywhere else, except SVG/poster generators.
 src/lib/motion-constants.ts  motion constants, no dependencies (safe for lazy/canvas code)
 src/lib/motion.ts        re-exports the constants + useMotionVariants() (pulls in motion/react)
+src/components/products/ Products, ProductCard, diagrams/* (server SVG), CompareTable + ProductsMotion
+                         (client), products-motion.ts (lazy, motion/mini), products.css
 src/components/hero/     Hero (server), NetworkSnapshot (SVG, server), NetworkStage + AgentsOnlineChip
                          (client), hero-canvas.ts (lazy 2D canvas, no React), graph.ts (shared layout),
                          hero.css (imported from globals.css, so there is one render-blocking stylesheet)
@@ -169,7 +187,9 @@ scripts/                 serve, budget, brand, lighthouse, posters
 - **Reduced-motion exceptions**: the global reduced-motion rule stops all CSS animation. Mark the rare
   motion the brief keeps (the hero core-node pulse) with `data-rm-ok`.
 - **Canvas code** reads colours from the CSS tokens at mount (`getComputedStyle`), not hard-coded hex.
-- **Measuring the hero**: `npm run measure:hero` reports the lazy chunk size and frame rate.
+- **Measuring**: `npm run measure:hero` / `npm run measure:products` report lazy chunk size and frame rate.
+- **Placeholders**: `{{PRICE_BOTS}}`, `{{PRICE_VPS}}`, `{{PRICE_CLUSTERS}}` live in `src/content/products.ts`
+  (same rule as `{{BRAND}}`); compare-table rows there are placeholders for Haze to fill.
 - **Section anchors**: `#hero #products #how #use-cases #security #pricing #faq #cta`, defined in `SECTIONS`; the smoke test asserts the order.
 
 ---

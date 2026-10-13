@@ -199,4 +199,4 @@ export function pickRoute(graph: Graph, rand: () => number): number[] {
   return route;
 }
 
-export const GRAPH = buildGraph();
+export { GRAPH_DATA as GRAPH } from "./graph-data";
