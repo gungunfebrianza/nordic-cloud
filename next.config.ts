@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
 
+if (!process.env.NEXT_PUBLIC_SIGNUP_ENDPOINT) {
+  console.warn(
+    "⚠ NEXT_PUBLIC_SIGNUP_ENDPOINT is not set: #cta sign-ups go nowhere (the form still shows success).",
+  );
+}
+
 const nextConfig: NextConfig = {
   output: "export",
   trailingSlash: true,

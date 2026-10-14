@@ -136,6 +136,20 @@ export type Copy = {
     /** One per FAQ_IDS entry. Claims are followed by {{CONFIRM}}. */
     items: Record<FaqId, { q: string; a: string; link?: { label: string; href: string } }>;
   };
+  cta: {
+    heading: string;
+    sub: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    submit: string;
+    sending: string;
+    /** Inline errors. */
+    invalid: string;
+    failed: string;
+    success: string;
+    privacyNote: string;
+    privacyLink: string;
+  };
   footer: {
     location: string;
   };

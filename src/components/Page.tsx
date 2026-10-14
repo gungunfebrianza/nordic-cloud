@@ -1,3 +1,4 @@
+import { Cta } from "@/components/cta/Cta";
 import { Faq } from "@/components/faq/Faq";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/hero/Hero";
@@ -36,6 +37,8 @@ export function Page({ locale }: { locale: Locale }) {
             <UseCases key={id} t={t} />
           ) : id === "pricing" ? (
             <Pricing key={id} t={t} />
+          ) : id === "cta" ? (
+            <Cta key={id} t={t} />
           ) : id === "faq" ? (
             <Faq key={id} t={t} />
           ) : id === "security" ? (

@@ -7,6 +7,7 @@
 @import "../components/security/security.css";
 @import "../components/pricing/pricing.css";
 @import "../components/faq/faq.css";
+@import "../components/cta/cta.css";
 
 @layer base {
   :root {
