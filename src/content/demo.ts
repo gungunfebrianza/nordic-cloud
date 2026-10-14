@@ -30,6 +30,9 @@ export const DEMO = {
     "#how dashboard: the agent's uptime when the panel first shows. Invented; counts up client-side.",
   ),
   howTeamSize: demo(5, "#how dashboard: agents in the example team"),
+  economyFeeds: demo(214, "#use-cases Economy job: market feeds ingested. Invented."),
+  financeInvoices: demo(41_203, "#use-cases Finance job: invoices matched. Invented."),
+  financeAnomalies: demo(12, "#use-cases Finance job: anomalies flagged. Invented."),
 } as const;
 
 /**
