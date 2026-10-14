@@ -11,15 +11,17 @@ const MEDIA_DIR = path.join(process.cwd(), "public", "media");
  */
 export function AgentVideo({
   name,
-  label,
+  playLabel,
+  pauseLabel,
   aspect = "4 / 5",
   wideMedia,
   className = "relative",
 }: {
   /** File stem in public/media, e.g. "vertical-economy". */
   name: string;
-  /** What the film shows, for the play button ("Play Economy film"). */
-  label: string;
+  /** Labels for the play/pause button, in the page's language ("Play Economy film"). */
+  playLabel: string;
+  pauseLabel: string;
   /** CSS aspect-ratio, default 4:5. */
   aspect?: string;
   /**
@@ -56,7 +58,9 @@ export function AgentVideo({
         {wide && <source media={wideMedia} srcSet={wide} type="image/avif" />}
         <img src={poster} alt="" className="size-full object-cover" />
       </picture>
-      {sources.length > 0 && <AgentVideoPlayer sources={sources} label={label} />}
+      {sources.length > 0 && (
+        <AgentVideoPlayer sources={sources} playLabel={playLabel} pauseLabel={pauseLabel} />
+      )}
     </div>
   );
 }

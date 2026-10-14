@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import { heartbeatPhase } from "@/lib/motion-constants";
-import { SHIELD_LABEL } from "@/content/security";
 import {
   C,
   PACKETS,
@@ -23,7 +22,7 @@ export const STILL_PACKET = PACKETS.length - 1;
  * the stage has data-running="true" (set near the viewport, never under reduced motion). Without
  * it the SVG is a still frame: the ring, the vault and one alert already caught and greyed out.
  */
-export function ShieldScene() {
+export function ShieldScene({ label }: { label: string }) {
   const sentinels = Array.from({ length: SENTINELS }, (_, i) => sentinelAt(i));
   const ring = sentinels.map((p, i) => `${i ? "L" : "M"}${p.x} ${p.y}`).join(" ") + " Z";
   const hits = new Map(PACKETS.map((p) => [p.sentinel, p.k]));
@@ -34,7 +33,7 @@ export function ShieldScene() {
       viewBox={`0 0 ${VIEW} ${VIEW}`}
       className="sec-shield h-auto w-full"
       role="img"
-      aria-label={SHIELD_LABEL}
+      aria-label={label}
     >
       {/* Spokes: each sentinel guards the vault. */}
       <g className="stroke-line" strokeWidth={1}>

@@ -1,5 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
-import { PRICE_BOTS, PRICE_CLUSTERS, PRICE_VPS, PRODUCTS } from "../src/content/products";
+import { en } from "../src/content/en";
+import { PRICE_BOTS, PRICE_CLUSTERS, PRICE_VPS, PRODUCT_IDS } from "../src/content/products";
+
+const PRODUCTS = PRODUCT_IDS.map((id) => ({ id, ...en.products.items[id] }));
 
 const section = (page: Page) => page.locator("#products");
 const card = (page: Page, id: string) => page.locator(`.product-card[data-product="${id}"]`);

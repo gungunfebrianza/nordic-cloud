@@ -2,7 +2,11 @@ import { expect, test, type Page } from "@playwright/test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { AgentVideo } from "../src/components/media/AgentVideo";
-import { USE_CASES, USE_CASES_HEADING } from "../src/content/use-cases";
+import { en } from "../src/content/en";
+import { USE_CASE_IDS } from "../src/content/use-cases";
+
+const USE_CASES = USE_CASE_IDS.map((id) => ({ id, ...en.useCases.items[id] }));
+const USE_CASES_HEADING = en.useCases.heading;
 
 const TYPE_MS_PER_CHAR = 18;
 
@@ -31,7 +35,7 @@ async function showFraction(page: Page, id: string, visible: number) {
 test.describe("AgentVideo", () => {
   test("poster only, no video element, when no film file exists", () => {
     const html = renderToStaticMarkup(
-      createElement(AgentVideo, { name: "does-not-exist", label: "Nothing" }),
+      createElement(AgentVideo, { name: "does-not-exist", playLabel: "Play", pauseLabel: "Pause" }),
     );
     expect(html).not.toContain("<video");
     expect(html).toContain('src="/media/does-not-exist-poster.avif"');

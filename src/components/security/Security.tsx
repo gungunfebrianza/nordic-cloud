@@ -1,11 +1,6 @@
 import { Boxes, ClipboardCheck, GlobeLock, LifeBuoy, type LucideIcon } from "lucide-react";
-import {
-  SECURITY_BLOCKS,
-  SECURITY_EYEBROW,
-  SECURITY_HEADING,
-  SECURITY_INTRO,
-  type SecurityBlockId,
-} from "@/content/security";
+import type { Copy } from "@/content/copy-types";
+import { SECURITY_BLOCK_IDS, type SecurityBlockId } from "@/content/security";
 import { WithPlaceholders } from "@/components/ui/WithPlaceholders";
 import { Certifications } from "./Certifications";
 import { SecurityLog } from "./SecurityLog";
@@ -24,7 +19,8 @@ const ICONS: Record<SecurityBlockId, LucideIcon> = {
  * Four draft blocks (claims marked {{CONFIRM}}), the shield of nodes with its log, a demo status
  * widget, and the certifications row, which renders nothing until real entries exist.
  */
-export function Security() {
+export function Security({ t }: { t: Copy }) {
+  const s = t.security;
   return (
     <section
       id="security"
@@ -35,34 +31,33 @@ export function Security() {
       <div className="mx-auto max-w-[1200px] px-5 py-24 sm:px-8">
         <div className="sec-layout">
           <div className="sec-head">
-            <p className="font-mono text-xs tracking-wider text-ink-muted uppercase">
-              {SECURITY_EYEBROW}
-            </p>
+            <p className="font-mono text-xs tracking-wider text-ink-muted uppercase">{s.eyebrow}</p>
             <h2
               id="security-heading"
               className="mt-3 max-w-[20ch] text-4xl leading-tight font-semibold text-ink sm:text-5xl"
             >
-              {SECURITY_HEADING}
+              {s.heading}
             </h2>
-            <p className="mt-4 max-w-[52ch] text-lg text-ink-muted">{SECURITY_INTRO}</p>
+            <p className="mt-4 max-w-[52ch] text-lg text-ink-muted">{s.intro}</p>
           </div>
 
           <div className="sec-stage" data-sec-loop="">
-            <ShieldScene />
-            <SecurityLog />
+            <ShieldScene label={s.shieldLabel} />
+            <SecurityLog t={t} />
           </div>
 
           <ul className="sec-blocks">
-            {SECURITY_BLOCKS.map((b) => {
-              const Icon = ICONS[b.id];
+            {SECURITY_BLOCK_IDS.map((id) => {
+              const b = s.blocks[id];
+              const Icon = ICONS[id];
               return (
-                <li key={b.id} className="sec-block" data-block={b.id}>
+                <li key={id} className="sec-block" data-block={id}>
                   <span className="sec-icon">
                     <Icon size={18} strokeWidth={1.5} aria-hidden="true" />
                   </span>
                   <h3 className="mt-4 text-lg font-semibold text-ink">{b.title}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-ink-muted">
-                    <WithPlaceholders text={b.body} />
+                    <WithPlaceholders text={b.body} t={t.common} />
                   </p>
                 </li>
               );
@@ -71,9 +66,9 @@ export function Security() {
         </div>
 
         <div className="mt-10">
-          <StatusWidget />
+          <StatusWidget t={t} />
         </div>
-        <Certifications />
+        <Certifications label={s.certifications} />
       </div>
       <SecurityRunning />
     </section>

@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { DEMO_UPTIME_90D } from "@/content/demo";
-import { STATUS_LINK_LABEL, STATUS_TITLE, STATUS_URL, isPlaceholder } from "@/content/security";
+import type { Copy } from "@/content/copy-types";
+import { STATUS_URL, isPlaceholder } from "@/content/security";
 import { DemoTag } from "@/components/ui/DemoTag";
 
 const BAR = 3;
@@ -11,10 +12,11 @@ const GAP = 1;
  * wired to a real status source. It links to STATUS_URL only once that is a real https URL; a
  * placeholder href would be a broken link.
  */
-export function StatusWidget() {
+export function StatusWidget({ t }: { t: Copy }) {
+  const s = t.security;
   const days = DEMO_UPTIME_90D.value;
   const degraded = days.filter((d) => d === "degraded").length;
-  const summary = `Demo data. Last ${days.length} days: ${days.length - degraded} operational, ${degraded} degraded.`;
+  const summary = s.statusSummary(days.length, days.length - degraded, degraded);
   const linked = !isPlaceholder(STATUS_URL) && STATUS_URL.startsWith("https://");
 
   const body = (
@@ -23,11 +25,11 @@ export function StatusWidget() {
         <span className="sec-dot" aria-hidden="true">
           <span className="sec-dot-ring" />
         </span>
-        <p className="font-medium text-ink">{STATUS_TITLE}</p>
-        <DemoTag />
+        <p className="font-medium text-ink">{s.statusTitle}</p>
+        <DemoTag label={t.common.demoTag} title={t.common.demoTitle} />
         {linked && (
           <span className="ml-auto inline-flex items-center gap-1 text-sm font-medium text-signal">
-            {STATUS_LINK_LABEL}
+            {s.statusLink}
             <ArrowUpRight size={14} strokeWidth={1.75} aria-hidden="true" />
           </span>
         )}
@@ -54,8 +56,8 @@ export function StatusWidget() {
         ))}
       </svg>
       <div className="mt-2 flex justify-between font-mono text-[11px] text-ink-muted">
-        <span>{days.length} days ago</span>
-        <span>Today</span>
+        <span>{s.daysAgo(days.length)}</span>
+        <span>{s.today}</span>
       </div>
     </>
   );

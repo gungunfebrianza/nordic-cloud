@@ -167,7 +167,15 @@ simulated run that did not reproduce.)
 ## File conventions
 
 ```
-src/app/                 layout.tsx (fonts, metadata), page.tsx (section order), globals.css, icon.svg
+src/app/                 shell.tsx (fonts, <html lang>, metadataFor(locale) with hreflang), globals.css,
+                         icon.svg, global-not-found.tsx (one bilingual 404; experimental.globalNotFound)
+src/app/(en)/            root layout lang="en" + page.tsx → /
+src/app/(da)/            root layout lang="da" + da/page.tsx → /da/
+src/components/Page.tsx  the whole page for one locale; section order; passes `t` (Copy) to each section
+src/components/LanguageSwitch.tsx  "EN · DA" plain links (nav, mobile menu, footer); no cookie/storage
+src/content/copy-types.ts  the Copy type: EVERY visible string. en.ts / da.ts each export one Copy
+src/content/en.ts, da.ts  all copy. Danish strings are wrapped in review() until a native check
+src/content/i18n.ts      COPY, LOCALES, localeHref(), languageLinks(), SITE_URL (NEXT_PUBLIC_SITE_URL)
 src/styles/tokens.css    ALL design tokens (@theme). No raw hex anywhere else, except SVG/poster generators.
 src/lib/motion-constants.ts  motion constants, no dependencies (safe for lazy/canvas code)
 src/lib/motion.ts        re-exports the constants + useMotionVariants() (pulls in motion/react)
@@ -188,7 +196,8 @@ src/content/certifications.ts  Ships EMPTY. The row renders only its entries; ne
 src/components/hero/     Hero (server), NetworkSnapshot (SVG, server), NetworkStage + AgentsOnlineChip
                          (client), hero-canvas.ts (lazy 2D canvas, no React), graph.ts (shared layout),
                          hero.css (imported from globals.css, so there is one render-blocking stylesheet)
-src/content/site.ts      BRAND, tagline, nav items, section ids. All copy lives in src/content/.
+src/content/site.ts      BRAND, DATACENTER_LOCATIONS, SECTION_IDS. Other content files hold non-copy only
+                         (ids, hrefs, prices, placeholders, the agent.yaml sample).
 src/content/demo.ts      EVERY demo/illustrative number, wrapped in demo(value, note) → { DEMO: true }
 src/components/<area>/   Hand-built components, PascalCase.tsx, one component per file
 src/components/ui/       Primitives (Button, …)
@@ -197,7 +206,7 @@ tests/                   Playwright: smoke.spec.ts (behaviour), screenshot.spec.
 scripts/                 serve, budget, brand, lighthouse, posters
 ```
 
-- **Server components by default.** Add `"use client"` only where state or effects are needed (currently: `Nav`).
+- **Server components by default.** Add `"use client"` only where state or effects are needed.
 - **Tailwind utilities from tokens**: `bg-paper`, `text-ink`, `text-ink-muted`, `border-line`, `bg-signal`, `font-display`, `font-mono`, `tracking-display`, `rounded-card`, `ease-entrance`, `duration-(--duration-micro)`, `bg-aurora`, `animate-heartbeat`. Tailwind's default palette is removed; only brand colours exist.
 - **`pulse` is graphics-only**: `fill-pulse`, `stroke-pulse`, `bg-pulse` on shapes. Never `text-pulse` (`check:brand` fails on it).
 - **Aurora gradient** (`bg-aurora`): at most 1–2 elements per screen.
@@ -219,7 +228,15 @@ scripts/                 serve, budget, brand, lighthouse, posters
   count. It must be zero before launch.
 - **Brand film**: `BrandFilm.tsx` checks `public/media` at build time. Without `brand-film.{webm,mp4}`
   and `brand-film.en.vtt` it shows the poster and "Film coming soon"; with them, a click-to-play player.
-- **Section anchors**: `#hero #products #how #use-cases #security #pricing #faq #cta`, defined in `SECTIONS`; the smoke test asserts the order.
+- **Section anchors**: `#hero #products #how #use-cases #security #pricing #faq #cta`, defined in `SECTION_IDS`; the smoke test asserts the order.
+- **i18n**: English at `/`, Danish at `/da/`, both static, each with its own root layout so `<html lang>`
+  is right. Never hard-code a visible string in a component: add it to `Copy` (copy-types.ts), then to
+  en.ts and da.ts (the build fails if Danish misses one). Server sections take `t: Copy`; client
+  components get only the strings they need as props, so neither language's copy lands in client JS.
+  Mono log lines, the agent.yaml sample and product names stay English in both. Danish drafts are
+  wrapped in `review("…")`; `check:brand` warns with the count; unwrap a string once a native speaker
+  approves it. `check:budget` measures both pages. Set `NEXT_PUBLIC_SITE_URL` at build for absolute
+  canonical/hreflang URLs (default: the local preview server).
 
 ---
 

@@ -1,11 +1,12 @@
 import { AGENT_NAME } from "@/content/how";
 import { DEMO } from "@/content/demo";
+import type { Copy } from "@/content/copy-types";
 import { DemoTag } from "@/components/ui/DemoTag";
 import { BEAT_W, beatPath } from "./geometry";
 import { LOG_VISIBLE, formatUptime, logLine } from "./log";
 
 /** Step 4: a small dashboard. Streaming logs, uptime counter and heartbeat graph (all DEMO). */
-export function Dashboard() {
+export function Dashboard({ t }: { t: Copy }) {
   const lines = Array.from({ length: LOG_VISIBLE }, (_, i) => logLine(i));
   return (
     <div className="how-dash">
@@ -16,13 +17,15 @@ export function Dashboard() {
         </span>
         <span className="font-mono text-[13px] font-medium text-ink">{AGENT_NAME}</span>
         <span className="font-mono text-[12px] text-ink-muted">
-          running · {DEMO.howTeamSize.value} agents
+          {t.how.running(DEMO.howTeamSize.value)}
         </span>
-        <DemoTag className="ml-auto" />
+        <DemoTag label={t.common.demoTag} title={t.common.demoTitle} className="ml-auto" />
       </div>
       <div className="mt-3 grid grid-cols-[auto_1fr] items-end gap-5">
         <div>
-          <p className="font-mono text-[11px] tracking-wider text-ink-muted uppercase">Uptime</p>
+          <p className="font-mono text-[11px] tracking-wider text-ink-muted uppercase">
+            {t.how.uptime}
+          </p>
           <p
             className="mt-1 font-mono text-xl font-medium text-ink tabular-nums"
             data-uptime={DEMO.howUptimeSeconds.value}
@@ -31,7 +34,9 @@ export function Dashboard() {
           </p>
         </div>
         <div className="min-w-0">
-          <p className="font-mono text-[11px] tracking-wider text-ink-muted uppercase">Heartbeat</p>
+          <p className="font-mono text-[11px] tracking-wider text-ink-muted uppercase">
+            {t.how.heartbeat}
+          </p>
           <div className="mt-1 h-10 overflow-hidden">
             <svg
               viewBox={`0 0 ${BEAT_W * 3} 44`}

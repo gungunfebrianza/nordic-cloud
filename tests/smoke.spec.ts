@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { BRAND, NAV_ITEMS, SECTIONS } from "../src/content/site";
+import { en } from "../src/content/en";
+import { BRAND, SECTION_IDS } from "../src/content/site";
+
+const NAV_ITEMS = en.nav.items;
+const SECTIONS = SECTION_IDS.map((id) => ({ id }));
 
 test.describe("page shell", () => {
   test("loads with no console errors and no third-party requests", async ({ page, baseURL }) => {

@@ -18,7 +18,15 @@ const failOn = (setFailed: (v: boolean) => void) => (e: unknown) => {
  * The video has no poster attribute: it is transparent until its first frame, so the poster
  * <picture> underneath (which can switch framing by media query) is what shows before playback.
  */
-export function AgentVideoPlayer({ sources, label }: { sources: VideoSource[]; label: string }) {
+export function AgentVideoPlayer({
+  sources,
+  playLabel,
+  pauseLabel,
+}: {
+  sources: VideoSource[];
+  playLabel: string;
+  pauseLabel: string;
+}) {
   const ref = useRef<HTMLVideoElement>(null);
   const [attached, setAttached] = useState(false);
   const [manual, setManual] = useState(false);
@@ -121,7 +129,7 @@ export function AgentVideoPlayer({ sources, label }: { sources: VideoSource[]; l
         <button
           type="button"
           onClick={toggle}
-          aria-label={`${playing ? "Pause" : "Play"} ${label}`}
+          aria-label={playing ? pauseLabel : playLabel}
           className="agent-video-toggle"
         >
           {playing ? (

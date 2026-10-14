@@ -1,16 +1,31 @@
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
-import type { Product } from "@/content/products";
+import type { Copy } from "@/content/copy-types";
+import type { ProductId } from "@/content/products";
 
 /**
  * One product card. The "Explore" link stretches over the whole card (::after), so the card has a
  * single tab stop and focusing it looks exactly like hovering (:focus-within in products.css).
  */
-export function ProductCard({ product, diagram }: { product: Product; diagram: ReactNode }) {
-  const titleId = `product-${product.id}-title`;
+export function ProductCard({
+  id,
+  product,
+  price,
+  href,
+  t,
+  diagram,
+}: {
+  id: ProductId;
+  product: Copy["products"]["items"][ProductId];
+  price: string;
+  href: string;
+  t: Copy["products"];
+  diagram: ReactNode;
+}) {
+  const titleId = `product-${id}-title`;
   return (
-    <article className="product-card" data-product={product.id} aria-labelledby={titleId}>
-      <div className="product-diagram" data-diagram={product.id}>
+    <article className="product-card" data-product={id} aria-labelledby={titleId}>
+      <div className="product-diagram" data-diagram={id}>
         <div className="aspect-[16/9] w-full">{diagram}</div>
         <p className="mt-1 text-center font-mono text-[11px] tracking-wide text-ink-muted">
           {product.caption}
@@ -36,11 +51,12 @@ export function ProductCard({ product, diagram }: { product: Product; diagram: R
         </ul>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-2 pt-7">
           <p className="text-sm whitespace-nowrap text-ink-muted">
-            from <span className="font-mono text-base font-medium text-ink">€{product.price}</span>
-            /mo
+            {t.from} <span className="font-mono text-base font-medium text-ink">€{price}</span>
+            {t.perMonth}
           </p>
-          <a href={product.href} className="product-explore">
-            Explore<span className="sr-only"> {product.title}</span>{" "}
+          <a href={href} className="product-explore">
+            {t.explore}
+            <span className="sr-only"> {product.title}</span>{" "}
             <span className="product-arrow" aria-hidden="true">
               →
             </span>

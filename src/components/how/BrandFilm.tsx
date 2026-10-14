@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import type { Copy } from "@/content/copy-types";
 import { BRAND } from "@/content/site";
 import { BrandFilmPlayer } from "./BrandFilmPlayer";
 
@@ -11,7 +12,7 @@ const has = (file: string) => existsSync(join(process.cwd(), "public", MEDIA, fi
  * and its captions (see public/media/README.md), the frame shows the poster and "Film coming
  * soon". Once they are there, it becomes a click-to-play player. Never autoplays.
  */
-export function BrandFilm() {
+export function BrandFilm({ t }: { t: Copy }) {
   const sources = [
     has("brand-film.webm") && { src: `${MEDIA}/brand-film.webm`, type: "video/webm" },
     has("brand-film.mp4") && { src: `${MEDIA}/brand-film.mp4`, type: "video/mp4" },
@@ -24,7 +25,13 @@ export function BrandFilm() {
     <figure className="how-film mt-24" data-film={ready ? "ready" : "coming-soon"}>
       <div className="how-film-frame">
         {ready ? (
-          <BrandFilmPlayer sources={sources} captions={captions} poster={poster} brand={BRAND} />
+          <BrandFilmPlayer
+            sources={sources}
+            captions={captions}
+            poster={poster}
+            playLabel={t.how.filmPlay(BRAND)}
+            captionsLabel={t.how.captionsLabel}
+          />
         ) : (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element -- static export, pre-sized AVIF poster */}
@@ -37,12 +44,13 @@ export function BrandFilm() {
               decoding="async"
               className="size-full object-cover"
             />
-            <span className="how-film-soon">Film coming soon</span>
+            <span className="how-film-soon">{t.how.filmSoon}</span>
           </>
         )}
       </div>
       <figcaption className="mt-3 font-mono text-xs text-ink-muted">
-        The {BRAND} film{ready ? " · captions available" : ""}
+        {t.how.filmCaption(BRAND)}
+        {ready ? ` · ${t.how.filmCaptionsAvailable}` : ""}
       </figcaption>
     </figure>
   );

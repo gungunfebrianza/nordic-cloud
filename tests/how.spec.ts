@@ -1,5 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
-import { AGENT_YAML, HOW_HEADING, HOW_STEPS } from "../src/content/how";
+import { en } from "../src/content/en";
+import { AGENT_YAML } from "../src/content/how";
+
+const HOW_HEADING = en.how.heading;
+const HOW_STEPS = en.how.steps;
 import { DATACENTER_LOCATIONS } from "../src/content/site";
 
 const section = (page: Page) => page.locator("#how");
@@ -166,6 +170,8 @@ test.describe("how", () => {
 test.describe("how screenshots", () => {
   test("how at 1440 per step, 390 stacked, film", async ({ browser }, info) => {
     test.skip(info.project.name !== "desktop", "one run is enough");
+    // ~15 s of deliberate waits plus 2× screenshots; the default 30 s is too tight under load.
+    test.setTimeout(90_000);
     const ctx = await browser.newContext({
       viewport: { width: 1440, height: 900 },
       deviceScaleFactor: 2,

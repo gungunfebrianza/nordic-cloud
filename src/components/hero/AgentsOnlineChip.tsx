@@ -3,15 +3,25 @@
 import { useEffect, useState } from "react";
 import { DEMO, isDemo } from "@/content/demo";
 
-const format = new Intl.NumberFormat("en-GB");
-
 /**
  * Eyebrow chip: a live-green dot on the heartbeat and the agents-online count.
  *
  * The count is DEMO data (src/content/demo.ts) and is tagged "demo" on screen while it is.
  * TODO: wire a real endpoint; once the value is no longer wrapped in demo(), the tag disappears.
  */
-export function AgentsOnlineChip({ suffix }: { suffix: string }) {
+export function AgentsOnlineChip({
+  suffix,
+  intl,
+  demoLabel,
+  demoTitle,
+}: {
+  suffix: string;
+  /** BCP 47 tag for the number format (en-GB: 2,418; da-DK: 2.418). */
+  intl: string;
+  demoLabel: string;
+  demoTitle: string;
+}) {
+  const format = new Intl.NumberFormat(intl);
   const source = DEMO.agentsOnline;
   const drift = DEMO.agentsOnlineDrift.value;
   const start = source.value;
@@ -52,9 +62,9 @@ export function AgentsOnlineChip({ suffix }: { suffix: string }) {
       {isDemo(source) && (
         <span
           className="rounded-[6px] border border-line px-1.5 font-mono text-[10px] tracking-wider text-ink-muted uppercase"
-          title="Illustrative figure, not live data"
+          title={demoTitle}
         >
-          demo
+          {demoLabel}
         </span>
       )}
     </p>

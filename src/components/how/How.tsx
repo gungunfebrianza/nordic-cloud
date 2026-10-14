@@ -1,4 +1,4 @@
-import { HOW_HEADING, HOW_STEPS } from "@/content/how";
+import type { Copy } from "@/content/copy-types";
 import { BrandFilm } from "./BrandFilm";
 import { CodePanel } from "./CodePanel";
 import { Dashboard } from "./Dashboard";
@@ -11,7 +11,8 @@ import { Scene } from "./Scene";
  * right scroll past; a lazy controller drives it with motion's useScroll. Mobile: each step
  * stacks with its own small visual. Everything here is server-rendered and complete without JS.
  */
-export function How() {
+export function How({ t }: { t: Copy }) {
+  const how = t.how;
   return (
     <section
       id="how"
@@ -20,12 +21,12 @@ export function How() {
       className="scroll-mt-16 border-b border-line"
     >
       <div className="mx-auto max-w-[1200px] px-5 py-24 sm:px-8">
-        <p className="font-mono text-xs tracking-wider text-ink-muted uppercase">How it works</p>
+        <p className="font-mono text-xs tracking-wider text-ink-muted uppercase">{how.eyebrow}</p>
         <h2
           id="how-heading"
           className="mt-3 max-w-[22ch] text-4xl leading-tight font-semibold text-ink sm:text-5xl"
         >
-          {HOW_HEADING}
+          {how.heading}
         </h2>
 
         <div className="how-layout mt-12 lg:mt-0">
@@ -39,14 +40,14 @@ export function How() {
               <div className="how-panel-frame">
                 <Scene uid="how-panel" />
                 <CodePanel />
-                <Dashboard />
+                <Dashboard t={t} />
               </div>
               <div className="how-rail">
                 <div className="how-rail-track">
                   <div className="how-rail-fill" />
                 </div>
                 <ol className="how-rail-steps">
-                  {HOW_STEPS.map((s) => (
+                  {how.steps.map((s) => (
                     <li key={s.n} data-n={s.n}>
                       0{s.n} {s.title}
                     </li>
@@ -57,7 +58,7 @@ export function How() {
           </div>
 
           <ol className="how-steps">
-            {HOW_STEPS.map((s) => (
+            {how.steps.map((s) => (
               <li key={s.n} className="how-step" data-n={s.n}>
                 <div className="how-step-text">
                   <p className="font-mono text-xs text-signal">0{s.n}</p>
@@ -70,7 +71,7 @@ export function How() {
                   {s.n === 1 ? (
                     <CodePanel />
                   ) : s.n === 4 ? (
-                    <Dashboard />
+                    <Dashboard t={t} />
                   ) : (
                     <div className="how-panel-frame">
                       <Scene uid={`how-step-${s.n}`} />
@@ -82,7 +83,7 @@ export function How() {
           </ol>
         </div>
 
-        <BrandFilm />
+        <BrandFilm t={t} />
       </div>
       <HowScroll />
     </section>

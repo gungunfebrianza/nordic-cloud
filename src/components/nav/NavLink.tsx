@@ -1,4 +1,4 @@
-import type { NavItem } from "@/content/site";
+type NavItem = { label: string; href: string };
 
 /**
  * Hover/focus underline: a 1px signal bar that scales in from the left over 200 ms.

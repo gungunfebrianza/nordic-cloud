@@ -16,6 +16,7 @@ async function* walk(dir) {
 
 const problems = [];
 let confirms = 0;
+let reviews = 0;
 for await (const file of walk(ROOT)) {
   const text = await readFile(file, "utf8");
   const rel = path.relative(process.cwd(), file);
@@ -28,6 +29,8 @@ for await (const file of walk(ROOT)) {
     if (/\btext-pulse\b/.test(line)) problems.push(`${where} pulse is graphics-only, never text`);
     if (rel.includes(`content${path.sep}`) && !/const CONFIRM =|^\s*(\*|\/\/|\/\*)/.test(line))
       confirms += (line.match(/\$\{CONFIRM\}|\{\{CONFIRM\}\}/g) ?? []).length;
+    if (rel.includes(`content${path.sep}`) && !/^\s*(\*|\/\/|\/\*)|export const review/.test(line))
+      reviews += (line.match(/\breview\(/g) ?? []).length;
   });
 }
 
@@ -39,3 +42,7 @@ if (problems.length) {
 console.log("✓ Brand rules OK");
 // Not a failure: drafts are allowed while building. Must be zero before launch.
 if (confirms) console.warn(`! ${confirms} draft claim(s) still marked {{CONFIRM}} in src/content`);
+if (reviews)
+  console.warn(
+    `! ${reviews} Danish string(s) still wrapped in review() in src/content (need a native check)`,
+  );

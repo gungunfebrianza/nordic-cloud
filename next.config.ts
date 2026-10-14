@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   poweredByHeader: false,
   reactStrictMode: true,
+  // Two root layouts ((en) and (da)) leave no single layout for the 404; this renders its own.
+  experimental: { globalNotFound: true },
 };
 
 export default nextConfig;

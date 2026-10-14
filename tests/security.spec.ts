@@ -1,13 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 import { CERTIFICATIONS } from "../src/content/certifications";
 import { DEMO_SECURITY_LOG, DEMO_UPTIME_90D } from "../src/content/demo";
-import {
-  CONFIRM,
-  SECURITY_BLOCKS,
-  SECURITY_HEADING,
-  STATUS_URL,
-  isPlaceholder,
-} from "../src/content/security";
+import { en } from "../src/content/en";
+import { CONFIRM, STATUS_URL, isPlaceholder } from "../src/content/security";
+
+const SECURITY_HEADING = en.security.heading;
+const SECURITY_BLOCKS = Object.values(en.security.blocks);
 import { DURATION, HEARTBEAT_MS } from "../src/lib/motion-constants";
 import { PACKETS, PACKET_HOP_S } from "../src/components/security/shield-geometry";
 

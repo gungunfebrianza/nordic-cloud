@@ -6,3 +6,8 @@ test-results
 package-lock.json
 CLAUDE.md
 .lighthouse
+media-originals
+# Storyboards delivered with the films; not our code.
+public/media/*.html
+PLAN.md
+plans

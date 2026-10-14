@@ -60,6 +60,44 @@
 }
 
 @layer components {
+  /* EN · DA: plain links; the current language is ink, the other muted. */
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  .lang-switch li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .lang-sep {
+    color: var(--color-ink-muted);
+  }
+
+  .lang-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding-inline: 0.15rem;
+    color: var(--color-ink-muted);
+    transition: color var(--duration-micro) var(--ease-entrance);
+  }
+
+  .lang-link:hover {
+    color: var(--color-ink);
+  }
+
+  .lang-link[aria-current="page"] {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
   /* An unfilled {{PLACEHOLDER}} or a {{CONFIRM}} draft marker, visible on purpose until launch. */
   .placeholder-chip {
     display: inline-block;

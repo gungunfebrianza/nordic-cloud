@@ -1,36 +1,8 @@
 /**
- * #how copy: four steps from a config file to a watched, running team of agents.
- * The YAML is fictional and illustrative. Demo numbers (uptime, log lines) live in demo.ts.
+ * #how non-copy: the agent config that types itself out in step 1. Fictional and illustrative,
+ * and English in both languages. The heading and steps live in en.ts / da.ts; demo numbers
+ * (uptime, log lines) live in demo.ts.
  */
-
-export const HOW_HEADING = "From prompt to production in four steps.";
-
-export type HowStep = { n: 1 | 2 | 3 | 4; title: string; body: string };
-
-export const HOW_STEPS: readonly HowStep[] = [
-  {
-    n: 1,
-    title: "Define",
-    body: "Describe the agent in one file: the model it uses, the tools it may call, when it runs, what it remembers and the guardrails it must respect.",
-  },
-  {
-    n: 2,
-    title: "Deploy",
-    body: "Push the file. We package the agent into an isolated container and place it on EU infrastructure. It stays up from then on.",
-  },
-  {
-    n: 3,
-    title: "Orchestrate",
-    body: "Add agents and connect them. An orchestrator routes the work; the agents share memory and queues.",
-  },
-  {
-    n: 4,
-    title: "Observe",
-    body: "Follow every run as it happens: streaming logs, traces, uptime and a heartbeat for each agent.",
-  },
-];
-
-/** The agent config that types itself out in step 1. Fictional. */
 export const AGENT_YAML = `# agent.yaml
 name: ledger-reconciler
 model: reasoning-large

@@ -2,10 +2,20 @@
 
 import { ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
-import { COMPARE_LABEL, COMPARE_ROWS, PRODUCTS } from "@/content/products";
 
 /** "Compare plans": expands a table with a height + fade transition (300 ms). */
-export function CompareTable() {
+export function CompareTable({
+  label,
+  feature,
+  titles,
+  rows,
+}: {
+  label: string;
+  feature: string;
+  /** Product titles, in column order. */
+  titles: readonly string[];
+  rows: readonly { label: string; cells: readonly string[] }[];
+}) {
   const [open, setOpen] = useState(false);
   const regionId = useId();
   return (
@@ -18,7 +28,7 @@ export function CompareTable() {
           aria-controls={regionId}
           onClick={() => setOpen((v) => !v)}
         >
-          {COMPARE_LABEL}
+          {label}
           <ChevronDown
             size={16}
             strokeWidth={1.75}
@@ -31,28 +41,28 @@ export function CompareTable() {
         <div className="compare-inner">
           <div className="mt-6 overflow-x-auto rounded-card border border-line bg-surface">
             <table className="w-full min-w-[560px] text-left text-sm">
-              <caption className="sr-only">{COMPARE_LABEL}</caption>
+              <caption className="sr-only">{label}</caption>
               <thead>
                 <tr className="border-b border-line">
                   <th
                     scope="col"
                     className="px-5 py-4 font-mono text-xs font-medium tracking-wider text-ink-muted uppercase"
                   >
-                    Feature
+                    {feature}
                   </th>
-                  {PRODUCTS.map((p) => (
+                  {titles.map((title) => (
                     <th
-                      key={p.id}
+                      key={title}
                       scope="col"
                       className="px-5 py-4 font-display text-[15px] font-semibold text-ink"
                     >
-                      {p.title}
+                      {title}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {COMPARE_ROWS.map((row) => (
+                {rows.map((row) => (
                   <tr key={row.label} className="border-b border-line last:border-0">
                     <th scope="row" className="px-5 py-3.5 font-normal text-ink-muted">
                       {row.label}

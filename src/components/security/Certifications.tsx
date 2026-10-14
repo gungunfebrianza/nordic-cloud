@@ -4,11 +4,11 @@ import { CERTIFICATIONS } from "@/content/certifications";
  * Renders exactly the entries in src/content/certifications.ts, which ships empty. With no
  * entries it renders nothing at all: no heading, no gap, and never a generated badge.
  */
-export function Certifications() {
+export function Certifications({ label }: { label: string }) {
   if (CERTIFICATIONS.length === 0) return null;
   return (
     <div className="mt-10" data-certifications="">
-      <h3 className="font-mono text-xs tracking-wider text-ink-muted uppercase">Certifications</h3>
+      <h3 className="font-mono text-xs tracking-wider text-ink-muted uppercase">{label}</h3>
       <ul className="mt-4 flex flex-wrap gap-3">
         {CERTIFICATIONS.map((c) => {
           const inner = (
