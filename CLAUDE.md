@@ -237,8 +237,15 @@ scripts/                 serve, budget, brand, lighthouse, posters
   `{{DATACENTER_LOCATIONS}}` (#how map label, #security residency block) lives in `src/content/site.ts`.
   `{{STATUS_URL}}` lives in `src/content/security.ts`; the status card is not a link until it is real.
   `{{SLA_PERCENT}}` and `{{LIMITS}}` (#faq answers) live in `src/content/faq.ts`.
-  Legal URLs (`{{PRIVACY_URL}}` …) live in `src/content/legal.ts`. `PlaceholderLink` renders a
-  placeholder URL as text + chip, never as an anchor.
+  Company details and legal links live in `src/content/legal.ts`: `{{ADDRESS}}`, `{{CVR}}`,
+  `{{EMAIL}}` (mailto: once real), `{{SECURITY_EMAIL}}`, `{{PRIVACY_URL}}`, `{{COOKIES_URL}}`,
+  `{{TERMS_URL}}`, `{{DPA_URL}}`. The footer shows name, address, CVR and email plainly on every page
+  (Danish e-commerce rules). `PlaceholderLink` renders a placeholder URL as text + chip, never as an
+  anchor (the footer's Status link uses `STATUS_URL` the same way).
+- **security.txt**: `npm run build` first runs `scripts/gen-security-txt.mjs` (prebuild), which writes
+  `public/.well-known/security.txt` (RFC 9116: Contact, Expires = build + 1 year, Preferred-Languages,
+  Canonical from `NEXT_PUBLIC_SITE_URL`). Generated, so it is git-ignored. `check:brand` warns while
+  `SECURITY_EMAIL` is a placeholder. Rebuild at least yearly so it never expires.
 - **Draft claims**: `{{CONFIRM}}` follows every #security claim that needs legal or ops sign-off.
   `WithPlaceholders` renders any `{{TOKEN}}` in copy as a visible chip; `check:brand` warns with the
   count. It must be zero before launch.

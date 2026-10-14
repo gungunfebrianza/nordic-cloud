@@ -322,7 +322,17 @@ export const en: Copy = {
     privacyLink: "Privacy",
   },
   footer: {
-    location: "Copenhagen, Denmark · EU-hosted",
+    company: "Company details",
+    cvr: "CVR",
+    legal: "Legal",
+    links: {
+      privacy: "Privacy",
+      cookies: "Cookies",
+      terms: "Terms",
+      dpa: "DPA",
+      status: "Status",
+      security: "Security",
+    },
   },
   notFound: {
     title: "Page not found",

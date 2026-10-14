@@ -151,7 +151,19 @@ export type Copy = {
     privacyLink: string;
   };
   footer: {
-    location: string;
+    /** Labels the company-details block. */
+    company: string;
+    cvr: string;
+    /** aria-label of the legal links list. */
+    legal: string;
+    links: {
+      privacy: string;
+      cookies: string;
+      terms: string;
+      dpa: string;
+      status: string;
+      security: string;
+    };
   };
   notFound: {
     title: string;

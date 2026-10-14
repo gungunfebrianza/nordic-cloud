@@ -42,6 +42,9 @@ if (problems.length) {
 console.log("✓ Brand rules OK");
 // Not a failure: drafts are allowed while building. Must be zero before launch.
 if (confirms) console.warn(`! ${confirms} draft claim(s) still marked {{CONFIRM}} in src/content`);
+const { SECURITY_EMAIL } = await import("../src/content/legal.ts");
+if (/^\{\{[A-Z_]+\}\}$/.test(SECURITY_EMAIL))
+  console.warn(`! security.txt still holds a placeholder: SECURITY_EMAIL = ${SECURITY_EMAIL}`);
 if (reviews)
   console.warn(
     `! ${reviews} Danish string(s) still wrapped in review() in src/content (need a native check)`,

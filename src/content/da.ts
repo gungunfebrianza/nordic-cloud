@@ -382,7 +382,17 @@ export const da: Copy = {
     privacyLink: review("Privatliv"),
   },
   footer: {
-    location: review("København, Danmark · Hostet i EU"),
+    company: review("Virksomhedsoplysninger"),
+    cvr: "CVR",
+    legal: review("Juridisk"),
+    links: {
+      privacy: review("Privatlivspolitik"),
+      cookies: review("Cookies"),
+      terms: review("Vilkår"),
+      dpa: review("Databehandleraftale"),
+      status: review("Driftsstatus"),
+      security: review("Sikkerhed"),
+    },
   },
   notFound: {
     title: review("Siden findes ikke"),

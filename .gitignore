@@ -7,3 +7,8 @@ playwright-report
 test-results
 tests/__screenshots__/
 .lighthouse
+
+# Generated at build (Expires changes every build)
+public/.well-known/security.txt
+# Uncompressed film masters, kept out of public/ and git
+media-originals/

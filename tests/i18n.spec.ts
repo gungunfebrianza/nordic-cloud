@@ -37,7 +37,7 @@ for (const p of PAGES) {
       await expect(page.locator("#how-heading")).toHaveText(p.t.how.heading);
       await expect(page.locator("#use-cases-heading")).toHaveText(p.t.useCases.heading);
       await expect(page.locator("#security-heading")).toHaveText(p.t.security.heading);
-      await expect(page.locator("footer")).toContainText(p.t.footer.location);
+      await expect(page.locator("footer")).toContainText(p.t.footer.links.privacy);
     });
 
     test("language switch: plain links, current marked, goes to the other language", async ({
