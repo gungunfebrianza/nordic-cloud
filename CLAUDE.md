@@ -188,6 +188,8 @@ src/components/use-cases/ UseCases, UseCaseTile (server); UseCasesMotion (client
                          use-cases-motion.ts (typed jobs, carousel counter; no motion library); use-cases.css
 src/components/pricing/  Pricing, PillToggle (server; variants shown by pure CSS on the checked radios);
                          PricingMotion (client) lazy-loads pricing-motion.ts (count-up, live region); pricing.css
+src/components/faq/      Faq (server; button aria-expanded + region per question), FaqToggle (client, ~0.3 KB:
+                         one delegated click listener); faq.css animates from aria-expanded. noscript = all open
 src/components/media/    AgentVideo (server: build-time source check, poster-only when no file),
                          AgentVideoPlayer (client: 50% visible play/pause, Save-Data/reduced-motion play
                          button, poster on error), video-coordinator.ts (one film at a time under 768px)
@@ -230,6 +232,7 @@ scripts/                 serve, budget, brand, lighthouse, posters
   Compare-table rows (en.ts / da.ts) are placeholders for Haze to fill.
   `{{DATACENTER_LOCATIONS}}` (#how map label, #security residency block) lives in `src/content/site.ts`.
   `{{STATUS_URL}}` lives in `src/content/security.ts`; the status card is not a link until it is real.
+  `{{SLA_PERCENT}}` and `{{LIMITS}}` (#faq answers) live in `src/content/faq.ts`.
 - **Draft claims**: `{{CONFIRM}}` follows every #security claim that needs legal or ops sign-off.
   `WithPlaceholders` renders any `{{TOKEN}}` in copy as a visible chip; `check:brand` warns with the
   count. It must be zero before launch.

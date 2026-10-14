@@ -5,6 +5,7 @@
  */
 import type { Copy } from "./copy-types";
 import { DEMO } from "./demo";
+import { LIMITS, SLA_PERCENT } from "./faq";
 import { review } from "./review";
 import { CONFIRM } from "./security";
 import { DATACENTER_LOCATIONS } from "./site";
@@ -313,6 +314,59 @@ export const da: Copy = {
       },
     },
     announce: (prices) => review(`Priserne er opdateret. ${prices}`),
+  },
+  faq: {
+    eyebrow: review("Spørgsmål og svar"),
+    heading: review("Spørgsmål, besvaret."),
+    items: {
+      sla: {
+        q: review("Hvilken oppetid lover I?"),
+        a: review(
+          `${SLA_PERCENT} hver måned. ${CONFIRM} Hvis vi ikke når det, får du servicekreditter på din næste faktura. ${CONFIRM}`,
+        ),
+      },
+      data: {
+        q: review("Hvor ligger mine data?"),
+        a: review(
+          `I ${DATACENTER_LOCATIONS}. ${CONFIRM} Som standard forlader intet EU/EØS. ${CONFIRM}`,
+        ),
+      },
+      gpu: {
+        q: review("Kan jeg få GPU'er?"),
+        a: review(
+          `Ja, på Agent VPS. GPU'er fås efter aftale; hvad vi kan tilbyde, afhænger af regionen. ${CONFIRM}`,
+        ),
+      },
+      frameworks: {
+        q: review("Hvilke agent-frameworks kan jeg køre?"),
+        a: review(
+          `Claude Agent SDK, LangGraph, CrewAI eller en hvilken som helst container. Kører den i en container, kører den her. ${CONFIRM}`,
+        ),
+      },
+      keys: {
+        q: review("Skal jeg bruge mine egne modelnøgler?"),
+        a: review(
+          `Begge dele virker. Med dine egne nøgler forbliver faktureringen hos modeludbyderen. Med administrerede modeller fakturerer vi dig. ${CONFIRM}`,
+        ),
+      },
+      limits: {
+        q: review("Hvor langt kan jeg skalere?"),
+        a: review(
+          `Hvert workspace starter med ${LIMITS}. ${CONFIRM} Vi hæver grænserne efter aftale.`,
+        ),
+      },
+      access: {
+        q: review("Hvordan håndterer I adgangskontrol?"),
+        a: review(`Single sign-on, roller og auditlogs. ${CONFIRM}`),
+        link: { label: review("Mere om sikkerhed"), href: "#security" },
+      },
+      migrate: {
+        q: review("Kan jeg flytte agenter, jeg allerede kører?"),
+        a: review(
+          `Ja. Læg agenten i en container, beskriv den i agent.yaml, og udrul. Vi hjælper med den første flytning. ${CONFIRM}`,
+        ),
+      },
+    },
   },
   footer: {
     location: review("København, Danmark · Hostet i EU"),

@@ -1,0 +1,84 @@
+/* #faq: accordion. State lives on the button (aria-expanded); everything else follows it. */
+
+.faq-layout {
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .faq-layout {
+    grid-template-columns: 4fr 8fr;
+    gap: 4rem;
+  }
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.faq-item:first-child {
+  border-top: 1px solid var(--color-line);
+}
+
+.faq-q {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  text-align: left;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+/* Chevron turns 180° with the spring easing over 200 ms. */
+.faq-chev {
+  flex-shrink: 0;
+  color: var(--color-ink-muted);
+  transition: rotate var(--duration-micro) var(--ease-spring);
+}
+
+.faq-q[aria-expanded="true"] .faq-chev {
+  rotate: 180deg;
+}
+
+/* Height + fade over 300 ms: grid rows 0fr → 1fr animates to the content's height. */
+.faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 300ms var(--ease-entrance),
+    opacity 300ms var(--ease-entrance);
+}
+
+.faq-item:has(.faq-q[aria-expanded="true"]) .faq-a {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* Closed answers leave the accessibility tree and the tab order once the fold has finished. */
+.faq-inner {
+  overflow: hidden;
+  min-height: 0;
+  visibility: hidden;
+  transition: visibility 0s 300ms;
+}
+
+.faq-item:has(.faq-q[aria-expanded="true"]) .faq-inner {
+  visibility: visible;
+  transition: visibility 0s;
+}
+
+.faq-inner p {
+  max-width: 62ch;
+  padding-bottom: 1.25rem;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--color-ink-muted);
+}

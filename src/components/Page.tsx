@@ -1,3 +1,4 @@
+import { Faq } from "@/components/faq/Faq";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/hero/Hero";
 import { How } from "@/components/how/How";
@@ -35,6 +36,8 @@ export function Page({ locale }: { locale: Locale }) {
             <UseCases key={id} t={t} />
           ) : id === "pricing" ? (
             <Pricing key={id} t={t} />
+          ) : id === "faq" ? (
+            <Faq key={id} t={t} />
           ) : id === "security" ? (
             <Security key={id} t={t} />
           ) : (

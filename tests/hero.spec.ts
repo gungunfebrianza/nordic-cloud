@@ -64,14 +64,16 @@ test.describe("hero", () => {
   });
 
   test("the canvas loads lazily and cross-fades in over the snapshot", async ({ page }) => {
-    const scripts: string[] = [];
-    page.on("request", (r) => r.resourceType() === "script" && scripts.push(r.url()));
+    // Timestamps, not a count taken after load: under load the idle callback can fire before the
+    // test reads a counter.
+    const scripts: number[] = [];
+    let loadedAt = Infinity;
+    page.on("load", () => (loadedAt = Date.now()));
+    page.on("request", (r) => r.resourceType() === "script" && scripts.push(Date.now()));
     await page.goto("/");
-    await page.waitForLoadState("load");
-    const before = scripts.length;
     await stage(page).scrollIntoViewIfNeeded();
     await expect(stage(page)).toHaveAttribute("data-state", "live", { timeout: 10_000 });
-    expect(scripts.length).toBeGreaterThan(before); // the canvas chunk arrived after load
+    expect(scripts.some((t) => t >= loadedAt)).toBe(true); // the canvas chunk arrived after load
     await expect(page.locator(".hero-canvas")).toHaveAttribute("data-renderer", "hero-canvas-2d");
     await expect
       .poll(() => page.locator(".hero-canvas").evaluate((el) => getComputedStyle(el).opacity))

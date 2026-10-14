@@ -3,6 +3,7 @@
  */
 import type { Copy } from "./copy-types";
 import { DEMO } from "./demo";
+import { LIMITS, SLA_PERCENT } from "./faq";
 import { CONFIRM } from "./security";
 import { DATACENTER_LOCATIONS } from "./site";
 
@@ -267,6 +268,45 @@ export const en: Copy = {
       },
     },
     announce: (prices) => `Prices updated. ${prices}`,
+  },
+  faq: {
+    eyebrow: "FAQ",
+    heading: "Questions, answered.",
+    items: {
+      sla: {
+        q: "What uptime do you commit to?",
+        a: `${SLA_PERCENT} each month. ${CONFIRM} If we miss it, you get service credits on your next invoice. ${CONFIRM}`,
+      },
+      data: {
+        q: "Where does my data live?",
+        a: `In ${DATACENTER_LOCATIONS}. ${CONFIRM} By default, nothing leaves the EU/EEA. ${CONFIRM}`,
+      },
+      gpu: {
+        q: "Can I get GPUs?",
+        a: `Yes, on Agent VPS. GPUs are available on request; what we can offer depends on the region. ${CONFIRM}`,
+      },
+      frameworks: {
+        q: "Which agent frameworks can I run?",
+        a: `Claude Agent SDK, LangGraph, CrewAI or any custom container. If it runs in a container, it runs here. ${CONFIRM}`,
+      },
+      keys: {
+        q: "Do I bring my own model keys?",
+        a: `Either works. With your own keys, billing stays with the model provider. With managed models, we bill you. ${CONFIRM}`,
+      },
+      limits: {
+        q: "How far can I scale?",
+        a: `Each workspace starts with ${LIMITS}. ${CONFIRM} We raise limits on request.`,
+      },
+      access: {
+        q: "How do you handle access control?",
+        a: `Single sign-on, roles and audit logs. ${CONFIRM}`,
+        link: { label: "More on security", href: "#security" },
+      },
+      migrate: {
+        q: "Can I move agents I already run?",
+        a: `Yes. Put the agent in a container, describe it in agent.yaml and deploy. We help with the first move. ${CONFIRM}`,
+      },
+    },
   },
   footer: {
     location: "Copenhagen, Denmark · EU-hosted",

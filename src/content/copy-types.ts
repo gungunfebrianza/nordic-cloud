@@ -3,6 +3,7 @@
  * build fails if a language misses a string. Non-copy (BRAND, placeholder constants, demo values,
  * prices, ids, hrefs, the agent.yaml sample, mono log lines) lives elsewhere in src/content/.
  */
+import type { FaqId } from "./faq";
 import type { ProductId } from "./products";
 import type { SecurityBlockId } from "./security";
 import type { SectionId } from "./site";
@@ -128,6 +129,12 @@ export type Copy = {
     tiers: Record<ProductId, { line: string; includes: readonly string[] }>;
     /** Spoken once after a toggle, with the final prices. */
     announce: (prices: string) => string;
+  };
+  faq: {
+    eyebrow: string;
+    heading: string;
+    /** One per FAQ_IDS entry. Claims are followed by {{CONFIRM}}. */
+    items: Record<FaqId, { q: string; a: string; link?: { label: string; href: string } }>;
   };
   footer: {
     location: string;
