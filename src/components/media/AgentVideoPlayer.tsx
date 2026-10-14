@@ -32,7 +32,6 @@ export function AgentVideoPlayer({
   const [failed, setFailed] = useState(false);
   const pendingPlay = useRef(false);
 
-
   // Sources just attached: load them, then resume whatever should be playing.
   useEffect(() => {
     const video = ref.current;
@@ -56,8 +55,7 @@ export function AgentVideoPlayer({
     video.addEventListener("pause", onPause);
 
     const saveData = (navigator as { connection?: { saveData?: boolean } }).connection?.saveData;
-    const isManual =
-      !!saveData || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isManual = !!saveData || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setManual(isManual);
 
     const near = new IntersectionObserver(

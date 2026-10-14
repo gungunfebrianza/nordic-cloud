@@ -27,7 +27,6 @@ export default function Home() {
             <How key={s.id} />
           ) : s.id === "use-cases" ? (
             <UseCases key={s.id} />
-
           ) : (
             <Section key={s.id} id={s.id} label={s.label} className="min-h-[50vh]">
               <h2 className="font-mono text-xs font-medium tracking-wider text-ink-muted uppercase">

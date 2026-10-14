@@ -3,7 +3,8 @@
  */
 import { DEMO } from "./demo";
 
-export type UseCaseId = "economy" | "finance" | "security" | "banking" | "programming" | "blockchain";
+export type UseCaseId =
+  "economy" | "finance" | "security" | "banking" | "programming" | "blockchain";
 
 export type UseCase = {
   id: UseCaseId;

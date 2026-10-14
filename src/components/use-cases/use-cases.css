@@ -62,8 +62,8 @@
   isolation: isolate;
 }
 
-/* The film scales, not the tile, so the rounded frame and text stay put. */
-.use-case-tile .agent-video {
+/* The film scales, not the tile or its play button, so the frame, text and controls stay put. */
+.use-case-tile .agent-video > :is(video, img) {
   transition: scale var(--duration-micro) var(--ease-spring);
 }
 
@@ -147,8 +147,8 @@
 }
 
 /* Hover and keyboard focus look identical. */
-.use-case-tile:hover .agent-video,
-.use-case-tile:focus-within .agent-video {
+.use-case-tile:hover .agent-video > :is(video, img),
+.use-case-tile:focus-within .agent-video > :is(video, img) {
   scale: 1.02;
 }
 
@@ -182,8 +182,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .use-case-tile:hover .agent-video,
-  .use-case-tile:focus-within .agent-video {
+  .use-case-tile:hover .agent-video > :is(video, img),
+  .use-case-tile:focus-within .agent-video > :is(video, img) {
     scale: none;
   }
 }
