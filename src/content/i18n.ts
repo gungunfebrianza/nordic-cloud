@@ -1,6 +1,7 @@
 /**
  * Languages. English at /, Danish at /da/. Both are static pages; the switch is a plain link.
  */
+import type { Currency } from "../lib/pricing";
 import type { Copy, Locale } from "./copy-types";
 import { da } from "./da";
 import { en } from "./en";
@@ -11,6 +12,9 @@ export const LOCALES: readonly Locale[] = ["en", "da"];
 export const DEFAULT_LOCALE: Locale = "en";
 
 export const COPY: Record<Locale, Copy> = { en, da };
+
+/** Currency a page shows first (#pricing, #products "from" prices). */
+export const DEFAULT_CURRENCY: Record<Locale, Currency> = { en: "EUR", da: "DKK" };
 
 /** The page for a language. */
 export const localeHref = (locale: Locale) => (locale === "en" ? "/" : `/${locale}/`);

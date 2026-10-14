@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Copy } from "@/content/copy-types";
 import type { ProductId } from "@/content/products";
+import { WithPlaceholders } from "@/components/ui/WithPlaceholders";
 
 /**
  * One product card. The "Explore" link stretches over the whole card (::after), so the card has a
@@ -13,6 +14,7 @@ export function ProductCard({
   price,
   href,
   t,
+  common,
   diagram,
 }: {
   id: ProductId;
@@ -20,6 +22,7 @@ export function ProductCard({
   price: string;
   href: string;
   t: Copy["products"];
+  common: Copy["common"];
   diagram: ReactNode;
 }) {
   const titleId = `product-${id}-title`;
@@ -51,7 +54,10 @@ export function ProductCard({
         </ul>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-2 pt-7">
           <p className="text-sm whitespace-nowrap text-ink-muted">
-            {t.from} <span className="font-mono text-base font-medium text-ink">€{price}</span>
+            {t.from}{" "}
+            <span className="font-mono text-base font-medium text-ink">
+              <WithPlaceholders text={price} t={common} />
+            </span>
             {t.perMonth}
           </p>
           <a href={href} className="product-explore">

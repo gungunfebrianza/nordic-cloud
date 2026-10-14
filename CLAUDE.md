@@ -186,6 +186,8 @@ src/components/how/      How, CodePanel, Scene, Dashboard, BrandFilm (server); H
                          scripts/gen-europe.mjs from Natural Earth, public domain); how.css
 src/components/use-cases/ UseCases, UseCaseTile (server); UseCasesMotion (client) lazy-loads
                          use-cases-motion.ts (typed jobs, carousel counter; no motion library); use-cases.css
+src/components/pricing/  Pricing, PillToggle (server; variants shown by pure CSS on the checked radios);
+                         PricingMotion (client) lazy-loads pricing-motion.ts (count-up, live region); pricing.css
 src/components/media/    AgentVideo (server: build-time source check, poster-only when no file),
                          AgentVideoPlayer (client: 50% visible play/pause, Save-Data/reduced-motion play
                          button, poster on error), video-coordinator.ts (one film at a time under 768px)
@@ -219,8 +221,13 @@ scripts/                 serve, budget, brand, lighthouse, posters
   motion the brief keeps (the hero core-node pulse) with `data-rm-ok`.
 - **Canvas code** reads colours from the CSS tokens at mount (`getComputedStyle`), not hard-coded hex.
 - **Measuring**: `npm run measure:hero` / `npm run measure:products` report lazy chunk size and frame rate.
-- **Placeholders**: `{{PRICE_BOTS}}`, `{{PRICE_VPS}}`, `{{PRICE_CLUSTERS}}` live in `src/content/products.ts`
-  (one constant each, like `BRAND`); compare-table rows there are placeholders for Haze to fill.
+- **Placeholders**: 12 prices live in `src/content/pricing.ts`, one constant each, like `BRAND`:
+  `{{PRICE_<BOTS|VPS|CLUSTERS>_<MONTHLY|ANNUAL>_<EUR|DKK>}}`. MONTHLY = per month billed monthly;
+  ANNUAL = the yearly total (shown ÷ 12 as "billed annually"). DKK is its own price, never converted.
+  All exclude VAT; the toggle shows ×1.25, rounded once to whole units (`src/lib/pricing.ts`).
+  #products "from" prices read the same constants (monthly, the page's default currency: EUR on /,
+  DKK on /da/). The count-up switches on by itself once a constant is a real number.
+  Compare-table rows (en.ts / da.ts) are placeholders for Haze to fill.
   `{{DATACENTER_LOCATIONS}}` (#how map label, #security residency block) lives in `src/content/site.ts`.
   `{{STATUS_URL}}` lives in `src/content/security.ts`; the status card is not a link until it is real.
 - **Draft claims**: `{{CONFIRM}}` follows every #security claim that needs legal or ops sign-off.

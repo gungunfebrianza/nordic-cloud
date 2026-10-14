@@ -1,6 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 import { en } from "../src/content/en";
-import { PRICE_BOTS, PRICE_CLUSTERS, PRICE_VPS, PRODUCT_IDS } from "../src/content/products";
+import {
+  PRICE_BOTS_MONTHLY_EUR,
+  PRICE_CLUSTERS_MONTHLY_EUR,
+  PRICE_VPS_MONTHLY_EUR,
+} from "../src/content/pricing";
+import { PRODUCT_IDS } from "../src/content/products";
 
 const PRODUCTS = PRODUCT_IDS.map((id) => ({ id, ...en.products.items[id] }));
 
@@ -22,7 +27,9 @@ test.describe("products", () => {
     expect(html).toContain("Three ways to run agents that never stop.");
     for (const p of PRODUCTS) expect(html).toContain(`data-product="${p.id}"`);
     expect(html.match(/class="product-diagram"/g)?.length).toBe(3);
-    for (const price of [PRICE_BOTS, PRICE_VPS, PRICE_CLUSTERS]) expect(html).toContain(price);
+    // "from" prices: monthly EUR on / (placeholders until set).
+    for (const price of [PRICE_BOTS_MONTHLY_EUR, PRICE_VPS_MONTHLY_EUR, PRICE_CLUSTERS_MONTHLY_EUR])
+      expect(html).toContain(price);
     expect(html).toContain("cron · webhooks · queues");
     expect(html).not.toContain("products-motion");
   });

@@ -104,6 +104,31 @@ export type Copy = {
     today: string;
     certifications: string;
   };
+  pricing: {
+    eyebrow: string;
+    heading: string;
+    intro: string;
+    /** Legends of the three toggles. */
+    billing: string;
+    currency: string;
+    vat: string;
+    monthly: string;
+    annual: string;
+    /** Toggle options for VAT. */
+    vatExclOption: string;
+    vatInclOption: string;
+    /** Notes under the price. */
+    billedMonthly: string;
+    billedAnnually: string;
+    vatExcl: string;
+    vatIncl: string;
+    perMonth: string;
+    cta: string;
+    /** Included items per tier; tier names come from products.items. */
+    tiers: Record<ProductId, { line: string; includes: readonly string[] }>;
+    /** Spoken once after a toggle, with the final prices. */
+    announce: (prices: string) => string;
+  };
   footer: {
     location: string;
   };

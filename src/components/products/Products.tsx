@@ -1,5 +1,8 @@
 import type { Copy } from "@/content/copy-types";
-import { PRODUCT_HREF, PRODUCT_IDS, PRODUCT_PRICE, type ProductId } from "@/content/products";
+import { DEFAULT_CURRENCY } from "@/content/i18n";
+import { PRICES } from "@/content/pricing";
+import { PRODUCT_HREF, PRODUCT_IDS, type ProductId } from "@/content/products";
+import { displayAmount, formatPrice, parsePrice } from "@/lib/pricing";
 import { CompareTable } from "./CompareTable";
 import { BotsDial } from "./diagrams/BotsDial";
 import { ClusterRing } from "./diagrams/ClusterRing";
@@ -12,6 +15,14 @@ const DIAGRAMS: Record<ProductId, () => React.ReactNode> = {
   vps: VpsBlock,
   clusters: ClusterRing,
 };
+
+/** Monthly, excl. VAT, in the page's default currency; the constant itself while it is a placeholder. */
+function fromPrice(id: ProductId, t: Copy) {
+  const currency = DEFAULT_CURRENCY[t.locale];
+  const constant = PRICES[id].monthly[currency];
+  const n = parsePrice(constant);
+  return n === null ? constant : formatPrice(displayAmount(n, "monthly", false), currency, t.intl);
+}
 
 export function Products({ t }: { t: Copy }) {
   const p = t.products;
@@ -38,9 +49,10 @@ export function Products({ t }: { t: Copy }) {
                 key={id}
                 id={id}
                 product={p.items[id]}
-                price={PRODUCT_PRICE[id]}
+                price={fromPrice(id, t)}
                 href={PRODUCT_HREF[id]}
                 t={p}
+                common={t.common}
                 diagram={<Diagram />}
               />
             );

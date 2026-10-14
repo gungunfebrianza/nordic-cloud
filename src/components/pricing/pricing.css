@@ -1,0 +1,147 @@
+/* #pricing: pill toggles, which variant shows (pure CSS on the checked radios), tier cards. */
+
+/* ── Pill toggles ─────────────────────────────────────────────────────── */
+.pill-field {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.pill {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  isolation: isolate;
+}
+
+/* Visually hidden but focusable: arrow keys move between the two options. */
+.pill-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pill-option {
+  position: relative;
+  z-index: 1;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: color var(--duration-micro) var(--ease-spring);
+}
+
+.pill-input:checked + .pill-option {
+  color: var(--color-surface);
+}
+
+.pill-input:focus-visible + .pill-option {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+}
+
+/* The thumb sits under the checked option; it slides with the spring easing over 200 ms. */
+.pill-thumb {
+  position: absolute;
+  inset-block: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  transition: translate var(--duration-micro) var(--ease-spring);
+}
+
+.pill-input:nth-of-type(2):checked ~ .pill-thumb {
+  translate: 100% 0;
+}
+
+/* ── Which variant shows: hide every element whose data-* doesn't match the toggles ───────── */
+.pricing:has(#pr-billing-monthly:checked) [data-b="annual"],
+.pricing:has(#pr-billing-annual:checked) [data-b="monthly"],
+.pricing:has(#pr-currency-eur:checked) [data-c="DKK"],
+.pricing:has(#pr-currency-dkk:checked) [data-c="EUR"],
+.pricing:has(#pr-vat-excl:checked) [data-v="incl"],
+.pricing:has(#pr-vat-incl:checked) [data-v="excl"] {
+  display: none;
+}
+
+/* ── Tier cards ───────────────────────────────────────────────────────── */
+.price-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+/* The middle tier: a 1px signal border. No aurora. */
+.price-card[data-featured] {
+  border-color: var(--color-signal);
+}
+
+.price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem;
+  min-height: 2.75rem;
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.price .placeholder-chip {
+  font-size: 0.42em;
+}
+
+.price-unit {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--color-ink-muted);
+}
+
+.price-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.75rem;
+  margin-top: auto;
+  padding-inline: 1.25rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-line);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-ink);
+  transition: border-color var(--duration-micro) var(--ease-entrance);
+}
+
+.price-card ul {
+  margin-bottom: 1.75rem;
+}
+
+.price-cta:hover {
+  border-color: rgb(41 98 255 / 0.35);
+}
+
+.price-card[data-featured] .price-cta {
+  border-color: var(--color-signal);
+  background: var(--color-signal);
+  color: var(--color-surface);
+}

@@ -2,6 +2,7 @@ import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/hero/Hero";
 import { How } from "@/components/how/How";
 import { Nav } from "@/components/nav/Nav";
+import { Pricing } from "@/components/pricing/Pricing";
 import { Products } from "@/components/products/Products";
 import { Section } from "@/components/Section";
 import { Security } from "@/components/security/Security";
@@ -32,6 +33,8 @@ export function Page({ locale }: { locale: Locale }) {
             <How key={id} t={t} />
           ) : id === "use-cases" ? (
             <UseCases key={id} t={t} />
+          ) : id === "pricing" ? (
+            <Pricing key={id} t={t} />
           ) : id === "security" ? (
             <Security key={id} t={t} />
           ) : (

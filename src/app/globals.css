@@ -5,6 +5,7 @@
 @import "../components/how/how.css";
 @import "../components/use-cases/use-cases.css";
 @import "../components/security/security.css";
+@import "../components/pricing/pricing.css";
 
 @layer base {
   :root {
