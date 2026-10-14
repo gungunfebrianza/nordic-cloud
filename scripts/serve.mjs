@@ -1,6 +1,7 @@
 // Minimal static server for the export in out/, used by Playwright and Lighthouse.
 // Usage: node scripts/serve.mjs [port]
 // Gzips text responses like any production CDN would, so Lighthouse sees realistic transfer sizes.
+// Supports single byte ranges (206 / 416), so videos can seek.
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { createServer } from "node:http";
@@ -50,15 +51,40 @@ createServer(async (req, res) => {
   }
   const immutable = file.includes(`${path.sep}_next${path.sep}static${path.sep}`);
   const type = TYPES[path.extname(file)] ?? "application/octet-stream";
-  const compress =
-    /^(text\/|application\/json|image\/svg)/.test(type) &&
-    /\bgzip\b/.test(String(req.headers["accept-encoding"] ?? ""));
-  res.writeHead(200, {
+  const headers = {
     "content-type": type,
     "cache-control": immutable ? "public, max-age=31536000, immutable" : "no-cache",
     vary: "accept-encoding",
-    ...(compress ? { "content-encoding": "gzip" } : {}),
-  });
+    "accept-ranges": "bytes",
+  };
+
+  // Byte ranges (video seeking), served uncompressed like any CDN. Single ranges only;
+  // anything else falls through to a normal 200.
+  const range = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range ?? "").trim());
+  if (range && (range[1] || range[2])) {
+    const size = (await stat(file)).size;
+    let start = range[1] ? Number(range[1]) : size - Number(range[2]);
+    let end = range[1] && range[2] ? Number(range[2]) : size - 1;
+    start = Math.max(0, start);
+    end = Math.min(end, size - 1);
+    if (start > end || start >= size) {
+      res.writeHead(416, { ...headers, "content-range": `bytes */${size}` });
+      res.end();
+      return;
+    }
+    res.writeHead(206, {
+      ...headers,
+      "content-range": `bytes ${start}-${end}/${size}`,
+      "content-length": end - start + 1,
+    });
+    createReadStream(file, { start, end }).pipe(res);
+    return;
+  }
+
+  const compress =
+    /^(text\/|application\/json|image\/svg)/.test(type) &&
+    /\bgzip\b/.test(String(req.headers["accept-encoding"] ?? ""));
+  res.writeHead(200, { ...headers, ...(compress ? { "content-encoding": "gzip" } : {}) });
   const stream = createReadStream(file);
   (compress ? stream.pipe(createGzip()) : stream).pipe(res);
 }).listen(PORT, () => console.log(`Serving out/ on http://localhost:${PORT}`));
