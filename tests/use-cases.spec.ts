@@ -119,6 +119,28 @@ test.describe("AgentVideo", () => {
     });
   }
 
+  test("Economy shows the 16:9 still where its tile is 16:9 (tablet), 4:5 elsewhere", async ({
+    browser,
+  }) => {
+    for (const [width, file] of [
+      [800, "vertical-economy-poster-wide.avif"],
+      [1440, "vertical-economy-poster.avif"],
+      [390, "vertical-economy-poster.avif"],
+    ] as const) {
+      const ctx = await browser.newContext({ viewport: { width, height: 900 } });
+      const page = await ctx.newPage();
+      await page.goto("/");
+      const img = tile(page, "economy").locator("picture img");
+      await img.scrollIntoViewIfNeeded();
+      await expect
+        .poll(() => img.evaluate((el: HTMLImageElement) => el.currentSrc.split("/").pop()))
+        .toBe(file);
+      // The other tiles never ask for a wide still.
+      expect(await tile(page, "finance").locator("picture source").count()).toBe(0);
+      await ctx.close();
+    }
+  });
+
   test("a broken film falls back to the poster silently", async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));

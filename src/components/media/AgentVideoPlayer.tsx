@@ -14,17 +14,11 @@ const failOn = (setFailed: (v: boolean) => void) => (e: unknown) => {
 /**
  * Autoplays muted while at least half visible, pauses below. Sources attach only when the film
  * first comes near the viewport. With reduced motion or Save-Data it never autoplays: a play
- * button toggles it instead. Any playback error swaps to the poster silently.
+ * button toggles it instead. Any playback error removes the video, leaving the poster beneath.
+ * The video has no poster attribute: it is transparent until its first frame, so the poster
+ * <picture> underneath (which can switch framing by media query) is what shows before playback.
  */
-export function AgentVideoPlayer({
-  sources,
-  poster,
-  label,
-}: {
-  sources: VideoSource[];
-  poster: string;
-  label: string;
-}) {
+export function AgentVideoPlayer({ sources, label }: { sources: VideoSource[]; label: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [attached, setAttached] = useState(false);
   const [manual, setManual] = useState(false);
@@ -96,10 +90,8 @@ export function AgentVideoPlayer({
     };
   }, []);
 
-  if (failed) {
-    // eslint-disable-next-line @next/next/no-img-element -- static export, AVIF poster as-is
-    return <img src={poster} alt="" className="absolute inset-0 size-full object-cover" />;
-  }
+  // The poster underneath (AgentVideo) shows through.
+  if (failed) return null;
 
   const toggle = () => {
     const video = ref.current;
@@ -116,7 +108,6 @@ export function AgentVideoPlayer({
       <video
         ref={ref}
         className="absolute inset-0 size-full object-cover"
-        poster={poster}
         muted
         loop
         playsInline

@@ -2,6 +2,8 @@ import { AgentVideo } from "@/components/media/AgentVideo";
 import { DemoTag } from "@/components/ui/DemoTag";
 import type { UseCase } from "@/content/use-cases";
 
+const TABLET = "(min-width: 768px) and (max-width: 1023px)";
+
 /**
  * One vertical. The film fills the tile; name, outcome and jobs sit in a bottom overlay on an ink
  * scrim. "Read the playbook" stretches over the tile (one tab stop), so focus mirrors hover.
@@ -20,6 +22,8 @@ export function UseCaseTile({ useCase, index }: { useCase: UseCase; index: numbe
         name={`vertical-${useCase.id}`}
         label={`${useCase.name} film`}
         aspect="auto"
+        // Economy is a 16:9 full-width tile on tablets (use-cases.css), so it gets the wide still there.
+        wideMedia={useCase.id === "economy" ? TABLET : undefined}
         className="absolute inset-0"
       />
       <div className="use-case-scrim" aria-hidden="true" />

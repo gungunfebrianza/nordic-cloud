@@ -13,6 +13,7 @@ export function AgentVideo({
   name,
   label,
   aspect = "4 / 5",
+  wideMedia,
   className = "relative",
 }: {
   /** File stem in public/media, e.g. "vertical-economy". */
@@ -21,10 +22,19 @@ export function AgentVideo({
   label: string;
   /** CSS aspect-ratio, default 4:5. */
   aspect?: string;
+  /**
+   * Media query where the box is landscape. There, NAME-poster-wide.avif (16:9, if it exists) is
+   * shown instead, so the still matches the film's framing and nothing shifts when it starts.
+   */
+  wideMedia?: string;
   /** Must position the box (default "relative"); children are absolutely placed. */
   className?: string;
 }) {
   const poster = `/media/${name}-poster.avif`;
+  const wide =
+    wideMedia && existsSync(path.join(MEDIA_DIR, `${name}-poster-wide.avif`))
+      ? `/media/${name}-poster-wide.avif`
+      : undefined;
   const sources: VideoSource[] = (
     [
       ["webm", "video/webm"],
@@ -40,12 +50,13 @@ export function AgentVideo({
       style={{ aspectRatio: aspect }}
       data-video={name}
     >
-      {sources.length === 0 ? (
-        // eslint-disable-next-line @next/next/no-img-element -- static export, AVIF poster as-is
-        <img src={poster} alt="" className="absolute inset-0 size-full object-cover" />
-      ) : (
-        <AgentVideoPlayer sources={sources} poster={poster} label={label} />
-      )}
+      {/* The poster sits under the video (which has no poster of its own), so a media query can
+          pick its framing; it also stays as the fallback if the film fails. */}
+      <picture className="absolute inset-0">
+        {wide && <source media={wideMedia} srcSet={wide} type="image/avif" />}
+        <img src={poster} alt="" className="size-full object-cover" />
+      </picture>
+      {sources.length > 0 && <AgentVideoPlayer sources={sources} label={label} />}
     </div>
   );
 }
