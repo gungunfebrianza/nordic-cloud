@@ -181,6 +181,10 @@ src/components/use-cases/ UseCases, UseCaseTile (server); UseCasesMotion (client
 src/components/media/    AgentVideo (server: build-time source check, poster-only when no file),
                          AgentVideoPlayer (client: 50% visible play/pause, Save-Data/reduced-motion play
                          button, poster on error), video-coordinator.ts (one film at a time under 768px)
+src/components/security/ Security, ShieldScene (SVG), SecurityLog, StatusWidget, Certifications (server);
+                         SecurityRunning (client, sets data-running); shield-geometry.ts; security.css.
+                         All loops are CSS, synced on one 9.6 s timeline (packet catch = log step)
+src/content/certifications.ts  Ships EMPTY. The row renders only its entries; never generate a badge
 src/components/hero/     Hero (server), NetworkSnapshot (SVG, server), NetworkStage + AgentsOnlineChip
                          (client), hero-canvas.ts (lazy 2D canvas, no React), graph.ts (shared layout),
                          hero.css (imported from globals.css, so there is one render-blocking stylesheet)
@@ -208,7 +212,11 @@ scripts/                 serve, budget, brand, lighthouse, posters
 - **Measuring**: `npm run measure:hero` / `npm run measure:products` report lazy chunk size and frame rate.
 - **Placeholders**: `{{PRICE_BOTS}}`, `{{PRICE_VPS}}`, `{{PRICE_CLUSTERS}}` live in `src/content/products.ts`
   (one constant each, like `BRAND`); compare-table rows there are placeholders for Haze to fill.
-  `{{DATACENTER_LOCATIONS}}` (map label in #how) lives in `src/content/how.ts`.
+  `{{DATACENTER_LOCATIONS}}` (#how map label, #security residency block) lives in `src/content/site.ts`.
+  `{{STATUS_URL}}` lives in `src/content/security.ts`; the status card is not a link until it is real.
+- **Draft claims**: `{{CONFIRM}}` follows every #security claim that needs legal or ops sign-off.
+  `WithPlaceholders` renders any `{{TOKEN}}` in copy as a visible chip; `check:brand` warns with the
+  count. It must be zero before launch.
 - **Brand film**: `BrandFilm.tsx` checks `public/media` at build time. Without `brand-film.{webm,mp4}`
   and `brand-film.en.vtt` it shows the poster and "Film coming soon"; with them, a click-to-play player.
 - **Section anchors**: `#hero #products #how #use-cases #security #pricing #faq #cta`, defined in `SECTIONS`; the smoke test asserts the order.

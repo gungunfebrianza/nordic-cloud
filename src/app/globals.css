@@ -4,6 +4,7 @@
 @import "../components/products/products.css";
 @import "../components/how/how.css";
 @import "../components/use-cases/use-cases.css";
+@import "../components/security/security.css";
 
 @layer base {
   :root {
@@ -55,5 +56,23 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+  }
+}
+
+@layer components {
+  /* An unfilled {{PLACEHOLDER}} or a {{CONFIRM}} draft marker, visible on purpose until launch. */
+  .placeholder-chip {
+    display: inline-block;
+    margin-inline: 0.15em;
+    padding: 0 0.35em;
+    border: 1px dashed var(--color-ink-muted);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.72em;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    color: var(--color-ink-muted);
+    white-space: nowrap;
+    vertical-align: 0.1em;
   }
 }

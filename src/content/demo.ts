@@ -96,3 +96,29 @@ export const DEMO_HOW_LOGS = demo(
   },
   "#how dashboard log lines. Invented run ids, counts and timings.",
 );
+
+/**
+ * #security shield log. Invented events. One line per heartbeat, each matching the alert packet
+ * the ring has just caught. `sentinel` is the 0-based index of the sentinel on the ring
+ * (0 = top, clockwise), shown as sentinel-01…08.
+ */
+export const DEMO_SECURITY_LOG = demo(
+  [
+    { sentinel: 2, threat: "anomalous egress" },
+    { sentinel: 5, threat: "credential stuffing" },
+    { sentinel: 0, threat: "unsigned webhook" },
+    { sentinel: 6, threat: "prompt injection" },
+  ] as const,
+  "#security shield log. Invented events; no real traffic.",
+);
+
+/**
+ * #security status widget: 90 days, oldest first. Invented until the strip is wired to a real
+ * status source. One degraded day so the strip visibly means something.
+ */
+export const DEMO_UPTIME_90D = demo(
+  Array.from({ length: 90 }, (_, i) => (i === 52 ? "degraded" : "operational")) as readonly (
+    "operational" | "degraded"
+  )[],
+  "#security status strip. Invented: 89 operational days, 1 degraded.",
+);

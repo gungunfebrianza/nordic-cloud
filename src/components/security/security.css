@@ -1,0 +1,258 @@
+/* #security: layout, the shield of nodes, its log and the status widget.
+ * Loops are CSS animations that exist only under [data-running="true"] (set near the viewport by
+ * SecurityRunning, never under reduced motion). Without it, everything shows a still frame.
+ * Timeline: one 9.6 s loop = 4 heartbeats. Packet k flies 0–1.2 s after beat k, is caught at the
+ * ring at 1.2 s, greys and dissolves by 1.8 s; the log steps up one line at the same 1.2 s mark. */
+
+.sec-layout {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-areas: "head" "stage" "blocks";
+}
+
+@media (min-width: 1024px) {
+  .sec-layout {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas: "stage head" "stage blocks";
+    grid-template-rows: auto 1fr;
+    column-gap: 3.5rem;
+    row-gap: 2.5rem;
+  }
+}
+
+.sec-head {
+  grid-area: head;
+}
+
+.sec-stage {
+  grid-area: stage;
+  align-self: start;
+  width: 100%;
+  max-width: 480px;
+  justify-self: center;
+  padding: 1.25rem 1.25rem 1.5rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: rgb(255 255 255 / 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.sec-blocks {
+  grid-area: blocks;
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .sec-blocks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.sec-block {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  padding: 1.5rem;
+}
+
+.sec-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-line);
+  color: var(--color-signal);
+}
+
+/* ── Shield ─────────────────────────────────────────────────────────── */
+
+.sec-beat,
+.sec-hit {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+
+.sec-packet {
+  fill: var(--color-alert);
+  opacity: 0;
+  translate: var(--ex) var(--ey);
+}
+
+/* Still frame: the latest alert, already caught and greyed at the ring. */
+.sec-stage:not([data-running="true"]) .sec-packet[data-still] {
+  fill: var(--color-ink-muted);
+  opacity: 0.6;
+}
+
+.sec-stage[data-running="true"] .sec-beat {
+  animation: heartbeat var(--heartbeat) linear infinite;
+}
+
+.sec-stage[data-running="true"] .sec-hit {
+  animation: sec-hit calc(var(--heartbeat) * 4) linear infinite;
+  animation-delay: calc(var(--k) * var(--heartbeat));
+}
+
+.sec-stage[data-running="true"] .sec-packet {
+  animation: sec-packet calc(var(--heartbeat) * 4) linear infinite;
+  animation-delay: calc(var(--k) * var(--heartbeat));
+}
+
+/* 9.6 s loop: 12.5% = 1.2 s (the catch), 18.75% = 1.8 s (dissolved). */
+@keyframes sec-packet {
+  0% {
+    translate: var(--sx) var(--sy);
+    scale: 1;
+    opacity: 0;
+    fill: var(--color-alert);
+  }
+  2% {
+    opacity: 1;
+  }
+  12.5% {
+    translate: var(--ex) var(--ey);
+    scale: 1;
+    opacity: 1;
+    fill: var(--color-alert);
+  }
+  14% {
+    fill: var(--color-ink-muted);
+  }
+  18.75% {
+    translate: var(--ex) var(--ey);
+    scale: 0.3;
+    opacity: 0;
+    fill: var(--color-ink-muted);
+  }
+  100% {
+    translate: var(--ex) var(--ey);
+    scale: 0.3;
+    opacity: 0;
+  }
+}
+
+/* The sentinel that caught the packet answers with one brighter ring. */
+@keyframes sec-hit {
+  0%,
+  12.4% {
+    scale: 1;
+    opacity: 0;
+  }
+  12.5% {
+    scale: 1;
+    opacity: 0.9;
+  }
+  25% {
+    scale: 3;
+    opacity: 0;
+  }
+  100% {
+    scale: 3;
+    opacity: 0;
+  }
+}
+
+/* ── Log ────────────────────────────────────────────────────────────── */
+
+.sec-log {
+  margin-top: 1rem;
+  --line: 1.75rem;
+}
+
+.sec-log-window {
+  height: calc(var(--line) * 4);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%);
+  mask-image: linear-gradient(to bottom, transparent, #000 35%);
+}
+
+.sec-log-line {
+  height: var(--line);
+  line-height: var(--line);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sec-stage[data-running="true"] .sec-log-strip {
+  animation: sec-log calc(var(--heartbeat) * 4) linear infinite;
+}
+
+/* Steps up one line at 1.2 s into each heartbeat, sliding over 150 ms (micro). */
+@keyframes sec-log {
+  0%,
+  12.5% {
+    translate: 0 0;
+  }
+  14.06%,
+  37.5% {
+    translate: 0 calc(var(--line) * -1);
+  }
+  39.06%,
+  62.5% {
+    translate: 0 calc(var(--line) * -2);
+  }
+  64.06%,
+  87.5% {
+    translate: 0 calc(var(--line) * -3);
+  }
+  89.06%,
+  100% {
+    translate: 0 calc(var(--line) * -4);
+  }
+}
+
+/* ── Status widget ──────────────────────────────────────────────────── */
+
+.sec-status {
+  display: block;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  padding: 1.25rem 1.5rem;
+}
+
+.sec-status-link {
+  transition: box-shadow var(--duration-micro) var(--ease-spring);
+}
+
+.sec-status-link:hover {
+  box-shadow: 0 18px 40px -24px rgb(10 16 32 / 0.25);
+}
+
+.sec-dot {
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--color-live);
+}
+
+.sec-dot-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-live);
+  opacity: 0;
+}
+
+.sec-status[data-running="true"] .sec-dot-ring {
+  animation: heartbeat var(--heartbeat) linear infinite;
+}
+
+.sec-cert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  padding: 0.75rem 1rem;
+}

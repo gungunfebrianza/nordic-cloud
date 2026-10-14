@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
-import { AGENT_YAML, DATACENTER_LOCATIONS, HOW_HEADING, HOW_STEPS } from "../src/content/how";
+import { AGENT_YAML, HOW_HEADING, HOW_STEPS } from "../src/content/how";
+import { DATACENTER_LOCATIONS } from "../src/content/site";
 
 const section = (page: Page) => page.locator("#how");
 const panel = (page: Page) => page.locator(".how-panel");

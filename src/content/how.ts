@@ -5,9 +5,6 @@
 
 export const HOW_HEADING = "From prompt to production in four steps.";
 
-/** Placeholder until the data-centre list is final. One constant, like BRAND. */
-export const DATACENTER_LOCATIONS = "{{DATACENTER_LOCATIONS}}";
-
 export type HowStep = { n: 1 | 2 | 3 | 4; title: string; body: string };
 
 export const HOW_STEPS: readonly HowStep[] = [

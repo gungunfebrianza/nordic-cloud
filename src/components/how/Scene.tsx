@@ -1,4 +1,4 @@
-import { DATACENTER_LOCATIONS } from "@/content/how";
+import { DATACENTER_LOCATIONS } from "@/content/site";
 import { EUROPE } from "./europe-data";
 import { MAP, NODE, SCENE, TEAM, teamPos } from "./geometry";
 

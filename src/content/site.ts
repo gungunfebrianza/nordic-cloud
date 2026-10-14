@@ -3,6 +3,9 @@
  */
 export const BRAND = "Serperku";
 
+/** Placeholder until the data-centre list is final. One constant, like BRAND (#how map, #security). */
+export const DATACENTER_LOCATIONS = "{{DATACENTER_LOCATIONS}}";
+
 export const TAGLINE = "Agents that never clock out.";
 
 export const DESCRIPTION =
