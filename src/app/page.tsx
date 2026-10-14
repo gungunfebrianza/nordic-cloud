@@ -3,6 +3,7 @@ import { Hero } from "@/components/hero/Hero";
 import { Products } from "@/components/products/Products";
 import { Nav } from "@/components/nav/Nav";
 import { Section } from "@/components/Section";
+import { UseCases } from "@/components/use-cases/UseCases";
 import { SECTIONS } from "@/content/site";
 
 export default function Home() {
@@ -21,6 +22,8 @@ export default function Home() {
             <Hero key={s.id} />
           ) : s.id === "products" ? (
             <Products key={s.id} />
+          ) : s.id === "use-cases" ? (
+            <UseCases key={s.id} />
           ) : (
             <Section key={s.id} id={s.id} label={s.label} className="min-h-[50vh]">
               <h2 className="font-mono text-xs font-medium tracking-wider text-ink-muted uppercase">

@@ -1,13 +1,13 @@
 /**
- * The brand name. Deliberately a placeholder until the name is final.
- * Every visible use of the name reads this constant; never hard-code a name elsewhere.
+ * The brand name (final). Every visible use of the name reads this constant;
+ * never hard-code it elsewhere.
  */
-export const BRAND = "{{BRAND}}";
+export const BRAND = "Serperku";
 
 export const TAGLINE = "Agents that never clock out.";
 
 export const DESCRIPTION =
-  "A Copenhagen-based, EU-hosted cloud for always-on AI agents: always-on bots, agent VPS and multi-agent clusters.";
+  "A Jakarta, Singapore and Copenhagen-based, EU-hosted cloud for always-on AI agents: always-on bots, agent VPS and multi-agent clusters.";
 
 /** Section anchors, in page order. */
 export const SECTIONS = [

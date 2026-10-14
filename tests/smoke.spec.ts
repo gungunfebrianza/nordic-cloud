@@ -20,9 +20,9 @@ test.describe("page shell", () => {
     expect(external).toEqual([]);
   });
 
-  test("renders the brand placeholder and light theme", async ({ page }) => {
+  test("renders the brand name and light theme", async ({ page }) => {
     await page.goto("/");
-    await expect(page).toHaveTitle(new RegExp(BRAND.replace(/[{}]/g, "\\$&")));
+    await expect(page).toHaveTitle(new RegExp(BRAND));
     const scheme = await page.evaluate(
       () => getComputedStyle(document.documentElement).colorScheme,
     );

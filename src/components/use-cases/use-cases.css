@@ -1,0 +1,189 @@
+/* #use-cases: bento / carousel layout, tile overlay, hover and focus states. */
+
+/* Mobile: native horizontal scroll-snap carousel, tiles 82% wide. */
+.use-case-grid {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  margin-inline: -1.25rem;
+  padding-inline: 1.25rem;
+  scroll-padding-inline: 1.25rem;
+}
+
+.use-case-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.use-case-cell {
+  flex: 0 0 82%;
+  scroll-snap-align: center;
+  aspect-ratio: 4 / 5;
+}
+
+/* Tablet: two columns, Economy full width at 16:9. */
+@media (min-width: 768px) {
+  .use-case-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .use-case-cell[data-cell="economy"] {
+    grid-column: span 2;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* Desktop: 3×3 bento. Economy spans 2×2; Finance and Security beside it, the rest below. */
+@media (min-width: 1024px) {
+  .use-case-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .use-case-cell[data-cell="economy"] {
+    grid-column: span 2;
+    grid-row: span 2;
+    aspect-ratio: auto;
+  }
+}
+
+.use-case-tile {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  isolation: isolate;
+}
+
+/* The film scales, not the tile, so the rounded frame and text stay put. */
+.use-case-tile .agent-video {
+  transition: scale var(--duration-micro) var(--ease-spring);
+}
+
+/* Ink scrim, strongest behind the text (AA for white type even over a white frame). Never text-shadow. */
+.use-case-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgb(10 16 32 / 0.85) 0%,
+    rgb(10 16 32 / 0.85) 34%,
+    rgb(10 16 32 / 0) 70%
+  );
+  pointer-events: none;
+}
+
+/* Deeper scrim on hover / focus, faded in as a second layer. */
+.use-case-scrim::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(10 16 32 / 0.6) 0%, rgb(10 16 32 / 0) 85%);
+  opacity: 0;
+  transition: opacity var(--duration-micro) var(--ease-entrance);
+}
+
+.use-case-overlay {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 1.25rem 1.25rem 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .use-case-cell[data-cell="economy"] .use-case-overlay {
+    padding: 2rem;
+  }
+
+  .use-case-cell[data-cell="economy"] h3 {
+    font-size: 1.75rem;
+  }
+}
+
+.use-case-job {
+  white-space: pre-wrap;
+}
+
+/* Typed lines keep their height, so typing never shifts the layout. */
+.use-case-jobs li {
+  min-height: 1.5em;
+}
+
+/* Stretched link: one tab stop per tile. Fades in on hover / focus; always shown on touch. */
+.use-case-link {
+  position: static;
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-top: 0.875rem;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-surface);
+  opacity: 0;
+  transition: opacity var(--duration-micro) var(--ease-entrance);
+}
+
+.use-case-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  z-index: 3;
+}
+
+.use-case-link:focus-visible {
+  outline: none;
+}
+
+.use-case-link:focus-visible::after {
+  outline: 2px solid var(--color-signal);
+  outline-offset: -2px;
+}
+
+/* Hover and keyboard focus look identical. */
+.use-case-tile:hover .agent-video,
+.use-case-tile:focus-within .agent-video {
+  scale: 1.02;
+}
+
+.use-case-tile:hover .use-case-scrim::after,
+.use-case-tile:focus-within .use-case-scrim::after,
+.use-case-tile:hover .use-case-link,
+.use-case-tile:focus-within .use-case-link {
+  opacity: 1;
+}
+
+@media (hover: none), (max-width: 767px) {
+  .use-case-link {
+    opacity: 1;
+  }
+}
+
+/* Play / pause for reduced motion and Save-Data (above the stretched link). */
+.agent-video-toggle {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.9);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .use-case-tile:hover .agent-video,
+  .use-case-tile:focus-within .agent-video {
+    scale: none;
+  }
+}

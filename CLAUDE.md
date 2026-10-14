@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-Marketing landing page for **{{BRAND}}**. Static Next.js export, light theme only, hand-built components.
+Marketing landing page for **Serperku**. Static Next.js export, light theme only, hand-built components.
 
-> The brand name is not final. It is the literal placeholder `{{BRAND}}`, held in **one** constant:
-> `src/content/site.ts` → `export const BRAND = "{{BRAND}}"`. Every visible use reads that constant.
-> Never hard-code or invent a brand name anywhere else.
+> The brand name is **Serperku** (final), held in **one** constant:
+> `src/content/site.ts` → `export const BRAND = "Serperku"`. Every visible use reads that constant.
+> Never hard-code the brand name anywhere else. (The brief below still says `{{BRAND}}`; it is kept verbatim.)
 
 ## Commands
 

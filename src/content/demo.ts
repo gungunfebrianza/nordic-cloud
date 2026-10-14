@@ -25,6 +25,9 @@ export const DEMO = {
     "How the demo agent count wanders: ±1–6 every 3–5 s, never more than 3% from the start value.",
   ),
   queueDepth: demo(42, "Illustrative queue depth in the cluster diagram"),
+  economyFeeds: demo(214, "#use-cases Economy job: market feeds ingested. Invented."),
+  financeInvoices: demo(41_203, "#use-cases Finance job: invoices matched. Invented."),
+  financeAnomalies: demo(12, "#use-cases Finance job: anomalies flagged. Invented."),
 } as const;
 
 /**
