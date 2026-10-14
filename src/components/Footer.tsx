@@ -22,7 +22,7 @@ export function Footer({ t, languages }: { t: Copy; languages: LanguageLink[] })
   ] as const;
   return (
     <footer className="bg-paper">
-      <div className="mx-auto grid max-w-[1200px] gap-8 px-5 py-12 text-sm text-ink-muted sm:px-8 md:grid-cols-[1fr_auto]">
+      <div className="mx-auto grid max-w-[1200px] gap-8 px-5 py-12 text-sm text-ink-muted sm:px-8 md:grid-cols-[minmax(16rem,1fr)_auto]">
         <address aria-label={f.company} className="not-italic">
           <p className="font-display text-base font-semibold tracking-display text-ink">{BRAND}</p>
           <p className="mt-2">

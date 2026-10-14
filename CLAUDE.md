@@ -116,10 +116,11 @@ Enforced by `npm run check:budget`, `npm run lighthouse` and the Playwright suit
 | LCP (throttled 4G, mobile) | < 2.0 s | devtools 1.89 s; Lantern estimate 2.0–2.9 s |
 | CLS | < 0.05 | 0 |
 | INP | < 200 ms | lab proxy TBT: devtools 348 ms ✗ (440–610 after #products; hero-only 283) |
-| Initial JS, gzipped | ≤ 150 KB (lazy chunks excluded) | 139.4 KB (after #use-cases, 2026-10-14) |
+| Initial JS, gzipped | ≤ 150 KB (lazy chunks excluded), each language's page | 140.3 KB on / and /da/ (after i18n, #pricing, #faq, #cta, footer, analytics; 2026-10-14). #cta form ~0.7 KB, #faq toggle ~0.3 KB, analytics loader ~0.1 KB (inert while off) |
 | Hero canvas chunk, gzipped | (lazy; keep small) | 4.8 KB (includes precomputed graph) |
 | Products motion chunk, gzipped | (lazy; keep small) | 5.1 KB |
 | Use-cases typing chunk, gzipped | (lazy; keep small) | 0.9 KB |
+| Pricing count-up chunk, gzipped | (lazy; keep small) | 0.9 KB |
 | #how useScroll controller chunk, gzipped | (lazy, desktop only; keep small) | 6.9 KB (includes motion/react's useScroll) |
 
 **Sandbox noise.** These runs happen in a cloud container with no GPU. Repeated Lighthouse runs on the
@@ -194,6 +195,7 @@ src/components/cta/      Cta (server; the page's ONLY full-bleed aurora, frosted
                          ~0.7 KB: native validity, inline errors, morph-to-check); cta.css.
                          NEXT_PUBLIC_SIGNUP_ENDPOINT (src/lib/signup.ts) is baked at build; unset = no
                          request, success still shows, and the build warns
+src/components/Analytics.tsx  client; rendered only when analytics is on (src/lib/analytics.ts)
 src/components/media/    AgentVideo (server: build-time source check, poster-only when no file),
                          AgentVideoPlayer (client: 50% visible play/pause, Save-Data/reduced-motion play
                          button, poster on error), video-coordinator.ts (one film at a time under 768px)
@@ -242,6 +244,13 @@ scripts/                 serve, budget, brand, lighthouse, posters
   `{{TERMS_URL}}`, `{{DPA_URL}}`. The footer shows name, address, CVR and email plainly on every page
   (Danish e-commerce rules). `PlaceholderLink` renders a placeholder URL as text + chip, never as an
   anchor (the footer's Status link uses `STATUS_URL` the same way).
+- **Analytics**: off by default. `src/lib/analytics.ts` reads `NEXT_PUBLIC_ANALYTICS` (off | plausible |
+  umami), `NEXT_PUBLIC_ANALYTICS_SRC` and `NEXT_PUBLIC_ANALYTICS_SITE` at build. Off: nothing renders and
+  nothing loads. On: `Analytics` injects one deferred script after the load event, outside the
+  initial JS. The script must be served from the site's own domain (self-hosted Umami, or Plausible
+  proxied by the host), so the no-third-party-requests rule holds; the build fails on an absolute or
+  protocol-relative URL. No cookies, no other trackers.
+  **Cookieless does not settle consent. Confirm ePrivacy/GDPR requirements with counsel before enabling.**
 - **security.txt**: `npm run build` first runs `scripts/gen-security-txt.mjs` (prebuild), which writes
   `public/.well-known/security.txt` (RFC 9116: Contact, Expires = build + 1 year, Preferred-Languages,
   Canonical from `NEXT_PUBLIC_SITE_URL`). Generated, so it is git-ignored. `check:brand` warns while

@@ -1,3 +1,4 @@
+import { Analytics } from "@/components/Analytics";
 import { Cta } from "@/components/cta/Cta";
 import { Faq } from "@/components/faq/Faq";
 import { Footer } from "@/components/Footer";
@@ -11,6 +12,7 @@ import { Security } from "@/components/security/Security";
 import { UseCases } from "@/components/use-cases/UseCases";
 import { COPY, languageLinks, type Locale } from "@/content/i18n";
 import { SECTION_IDS } from "@/content/site";
+import { ANALYTICS } from "@/lib/analytics";
 
 /** The whole landing page in one language. Every section takes that language's copy as `t`. */
 export function Page({ locale }: { locale: Locale }) {
@@ -53,6 +55,8 @@ export function Page({ locale }: { locale: Locale }) {
         )}
       </main>
       <Footer t={t} languages={languages} />
+      {/* Off by default: then nothing renders and nothing loads. See src/lib/analytics.ts. */}
+      {ANALYTICS && <Analytics config={ANALYTICS} />}
     </>
   );
 }
